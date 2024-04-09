@@ -5,6 +5,9 @@
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/matrix.hpp>
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 #include <iostream>
 #include <stb_image.h>
 
@@ -80,22 +83,43 @@ int main()
 	}
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	glfwSetCursorPosCallback(window, mouse_callback);
 
 	stbi_set_flip_vertically_on_load(true);
 
 	glEnable(GL_DEPTH_TEST);
 
+	// Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+
+	// Setup Platform/Renderer backends
+	ImGui_ImplGlfw_InitForOpenGL(window, true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
+	ImGui_ImplOpenGL3_Init();
+
 	Shader shader("res/shaders/basic.vert", "res/shaders/basic.frag");
-	Model ourModel("res/textures/battleship/Obj/space battleship lowpoly.obj");
-	//Model ourModel("res/textures/backpack.obj");
+	Model ourModel("res/textures/backpack.obj");
+
+	glm::vec3 diffuse(0.5f, 0.5f, 0.5f);
+	glm::vec3 specular(1.0f, 1.0f, 1.0f);
 
 	while (!glfwWindowShouldClose(window))
 	{
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
+
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+		ImGui::Text("Hello, world %d", 123);
+		if (ImGui::Button("Save"))
+			std::cout << "Save button preessed" << std::endl;
+		ImGui::ColorEdit3("Diffuse", &diffuse[0]);
+		ImGui::ColorEdit3("Specular", &specular[0]);
 
 		processInput(window);
 
@@ -104,21 +128,34 @@ int main()
 
 		shader.Bind();
 
-		glm::mat4 projection = glm::perspective(glm::radians(camera.GetZoom()), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
+		glm::mat4 projection = glm::perspective(glm::radians(camera.GetZoom()), (float)WIDTH / (float)HEIGHT, 0.1f, 1000.0f);
 		shader.SetMat4f("u_Proj", projection);
 		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
 		shader.SetMat4f("u_Model", model);
 		glm::mat4 view = camera.GetViewMatrix();
 		shader.SetMat4f("u_View", view);
 
+		shader.SetVec3f("viewPos", camera.GetPosition());
+		shader.SetVec3f("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+		shader.SetVec3f("dirLight.diffuse", diffuse);
+		shader.SetVec3f("dirLight.specular", specular);
+
+
 		ourModel.Draw(shader);
+
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 	glfwTerminate();
 	return 0;
 }

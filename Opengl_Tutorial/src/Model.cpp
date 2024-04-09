@@ -51,7 +51,6 @@ Mesh Model::ProcessMesh(const aiMesh* mesh, const aiScene* scene)
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
 	std::vector<Texture> textures;
-	std::vector<Color> colors;
 
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
@@ -98,21 +97,9 @@ Mesh Model::ProcessMesh(const aiMesh* mesh, const aiScene* scene)
 		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 		std::vector<Texture> specularMaps = LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
 		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-
-		Color color;
-		aiColor3D colorValue;
-		material->Get(AI_MATKEY_COLOR_DIFFUSE, colorValue);
-		color.type = "color_diffuse";
-		color.Value = glm::vec3(colorValue.r, colorValue.g, colorValue.b);
-		colors.push_back(color);
-
-		material->Get(AI_MATKEY_COLOR_SPECULAR, colorValue);
-		color.type = "color_specular";
-		color.Value = glm::vec3(colorValue.r, colorValue.g, colorValue.b);
-		colors.push_back(color);
 	}
 
-	return Mesh(vertices, indices, textures, colors);
+	return Mesh(vertices, indices, textures);
 }
 
 std::vector<Texture> Model::LoadMaterialTextures(const aiMaterial* mat, aiTextureType type, const std::string& typeName)

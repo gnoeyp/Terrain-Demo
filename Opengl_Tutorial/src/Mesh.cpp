@@ -1,8 +1,8 @@
 #include "Mesh.h"
 #include <GL/glew.h>
 
-Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<Texture>& textures, const std::vector<Color>& colors)
-	: m_Vertices(vertices), m_Indices(indices), m_Textures(textures), m_Colors(colors)
+Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<Texture>& textures)
+	: m_Vertices(vertices), m_Indices(indices), m_Textures(textures)
 {
 	glGenVertexArrays(1, &m_VAO);
 	glBindVertexArray(m_VAO);
@@ -43,11 +43,6 @@ void Mesh::Draw(const Shader& shader) const
 			number = specularNr++;
 		shader.SetInt((name + std::to_string(number)).c_str(), i);
 		glBindTexture(GL_TEXTURE_2D, m_Textures[i].id);
-	}
-
-	for (auto& color : m_Colors)
-	{
-		shader.SetVec3f(color.type.c_str(), color.Value);
 	}
 
 	glBindVertexArray(m_VAO);

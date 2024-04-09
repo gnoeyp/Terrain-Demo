@@ -8,7 +8,7 @@ private:
 	glm::vec3 m_Front;
 	glm::vec3 m_Up;
 	glm::vec3 m_WorldUp;
-	float m_Speed = 0.5f;
+	float m_Speed = 5.0f;
 	float m_Yaw = -90.f;
 	float m_Pitch = 0.0f;
 	float m_Zoom = 45.0f;
@@ -22,6 +22,7 @@ public:
 	void MoveBack(float dt);
 	void Rotate(float dYaw, float dPitch);
 	void UpdateCameraVectors();
+	const glm::vec3& GetPosition() const { return m_Position; }
 	inline float GetZoom() const { return m_Zoom; }
 };
 
