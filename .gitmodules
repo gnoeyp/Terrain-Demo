@@ -1,0 +1,6 @@
+[submodule ".\\Opengl_Tutorial\\vendor\\glm"]
+	path = .\\Opengl_Tutorial\\vendor\\glm
+	url = https://github.com/g-truc/glm
+[submodule ".\\Opengl_Tutorial\\vendor\\assimp"]
+	path = .\\Opengl_Tutorial\\vendor\\assimp
+	url = git@github.com:assimp/assimp.git
