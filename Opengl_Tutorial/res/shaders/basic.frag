@@ -27,6 +27,9 @@ uniform DirLight dirLight;
 
 void main()
 {
+	float ambientStrength = 0.1f;
+	vec3 ambientColor = ambientStrength * dirLight.ambient;
+
 	vec3 norm = normalize(Normal);
 	vec3 lightDir = normalize(-dirLight.direction);
 	float diff = max(dot(norm, lightDir), 0.0);
@@ -37,5 +40,5 @@ void main()
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0f);
 	vec3 specularColor = dirLight.specular * spec * vec3(texture(texture_specular1, TexCoords));
 
-	color = vec4(diffuseColor + specularColor, 1.0);
+	color = vec4(ambientColor + diffuseColor + specularColor, 1.0);
 }

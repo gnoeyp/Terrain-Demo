@@ -20,7 +20,8 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 float lastX;
 float lastY;
-bool isFirst = true;
+bool isFirstMouse = true;
+bool isDragging = false;
 
 void processInput(GLFWwindow* window)
 {
@@ -43,19 +44,32 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	if (isFirst)
+	if (!isDragging) return;
+	if (isFirstMouse)
 	{
 		lastX = xpos;
 		lastY = ypos;
-		isFirst = false;
+		isFirstMouse = false;
 		return;
 	}
-	float dYaw = 0.01f * (xpos - lastX);
-	float dPitch = 0.01f * (lastY - ypos);
+	float sensitivity = 0.1f;
+	float dYaw = sensitivity * (lastX - xpos);
+	float dPitch = sensitivity * (ypos - lastY);
 	lastX = xpos;
 	lastY = ypos;
 
 	camera.Rotate(dYaw, dPitch);
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+	{
+		isDragging = true;
+		isFirstMouse = true;
+	}
+	else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
+		isDragging = false;
 }
 
 int main()
@@ -85,6 +99,7 @@ int main()
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetMouseButtonCallback(window, mouse_button_callback);
 
 	stbi_set_flip_vertically_on_load(true);
 
@@ -103,6 +118,7 @@ int main()
 	Shader shader("res/shaders/basic.vert", "res/shaders/basic.frag");
 	Model ourModel("res/textures/backpack.obj");
 
+	glm::vec3 ambient(0.5f, 0.5f, 0.5f);
 	glm::vec3 diffuse(0.5f, 0.5f, 0.5f);
 	glm::vec3 specular(1.0f, 1.0f, 1.0f);
 
@@ -118,6 +134,7 @@ int main()
 		ImGui::Text("Hello, world %d", 123);
 		if (ImGui::Button("Save"))
 			std::cout << "Save button preessed" << std::endl;
+		ImGui::ColorEdit3("Ambient", &ambient[0]);
 		ImGui::ColorEdit3("Diffuse", &diffuse[0]);
 		ImGui::ColorEdit3("Specular", &specular[0]);
 
@@ -139,6 +156,7 @@ int main()
 
 		shader.SetVec3f("viewPos", camera.GetPosition());
 		shader.SetVec3f("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+		shader.SetVec3f("dirLight.ambient", ambient);
 		shader.SetVec3f("dirLight.diffuse", diffuse);
 		shader.SetVec3f("dirLight.specular", specular);
 
