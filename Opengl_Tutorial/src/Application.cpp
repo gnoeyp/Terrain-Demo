@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "CubeMap.h"
+#include "Ground.h"
 #include "Model.h"
 #include "Shader.h"
 #include <GL/glew.h>
@@ -106,6 +107,8 @@ int main()
 
 	glEnable(GL_DEPTH_TEST);
 
+	Shader::Init();
+
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -116,8 +119,9 @@ int main()
 	ImGui_ImplGlfw_InitForOpenGL(window, true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
 	ImGui_ImplOpenGL3_Init();
 
-	Shader shader("res/shaders/basic.vert", "res/shaders/basic.frag");
+	//Shader shader("res/shaders/basic.vert", "res/shaders/basic.frag");
 	Shader skyboxShader("res/shaders/skybox.vert", "res/shaders/skybox.frag");
+	Shader groundShader("res/shaders/basic.vert", "res/shaders/basic.frag");
 	//Model ourModel("res/textures/backpack/backpack.obj");
 	std::vector<std::string> faces = {
 		"res/textures/skybox/right.jpg",
@@ -133,33 +137,7 @@ int main()
 	glm::vec3 diffuse(0.5f, 0.5f, 0.5f);
 	glm::vec3 specular(1.0f, 1.0f, 1.0f);
 
-	float positions[] = {
-		-1.0f, 0.0f, -1.0f,
-		-1.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, -1.0f,
-		1.0f, 0.0f, 1.0f
-	};
-
-	unsigned int indices[] = {
-		0, 1, 3,
-		3, 2, 0
-	};
-
-	unsigned int groundVAO, groundVBO, groundEBO;
-	glGenVertexArrays(1, &groundVAO);
-	glBindVertexArray(groundVAO);
-
-	glGenBuffers(1, &groundVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, groundVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
-
-	glGenBuffers(1, &groundEBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, groundEBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
+	Ground ground;
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -182,26 +160,29 @@ int main()
 		glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		shader.Bind();
+		//Shader::BASIC_TEXTURE.Bind();
 
 		glm::mat4 projection = glm::perspective(glm::radians(camera.GetZoom()), (float)WIDTH / (float)HEIGHT, 0.1f, 1000.0f);
-		shader.SetMat4f("u_Proj", projection);
+		//Shader::BASIC_TEXTURE.SetMat4f("u_Proj", projection);
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
-		shader.SetMat4f("u_Model", model);
-		glm::mat4 view = camera.GetViewMatrix();
-		shader.SetMat4f("u_View", view);
+		//Shader::BASIC_TEXTURE.SetMat4f("u_Model", model);
+		//Shader::BASIC_TEXTURE.SetMat4f("u_View", camera.GetViewMatrix());
 
-		shader.SetVec3f("viewPos", camera.GetPosition());
-		shader.SetVec3f("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
-		shader.SetVec3f("dirLight.ambient", ambient);
-		shader.SetVec3f("dirLight.diffuse", diffuse);
-		shader.SetVec3f("dirLight.specular", specular);
+		//Shader::BASIC_TEXTURE.SetVec3f("viewPos", camera.GetPosition());
+		//Shader::BASIC_TEXTURE.SetVec3f("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+		//Shader::BASIC_TEXTURE.SetVec3f("dirLight.ambient", ambient);
+		//Shader::BASIC_TEXTURE.SetVec3f("dirLight.diffuse", diffuse);
+		//Shader::BASIC_TEXTURE.SetVec3f("dirLight.specular", specular);
 
 		//ourModel.Draw(shader);
-		glBindVertexArray(groundVAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		Shader::BASIC->Bind();
+		Shader::BASIC->SetMat4f("u_Proj", projection);
+		Shader::BASIC->SetMat4f("u_Model", model);
+		Shader::BASIC->SetMat4f("u_View", camera.GetViewMatrix());
+
+		ground.Draw(*Shader::BASIC);
 
 		skyboxShader.Bind();
 		skyboxShader.SetMat4f("u_Proj", projection);

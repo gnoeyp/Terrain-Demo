@@ -4,6 +4,9 @@
 #include <iostream>
 #include <sstream>
 
+Shader* Shader::BASIC = nullptr;
+Shader* Shader::BASIC_TEXTURE = nullptr;
+
 std::string Shader::ParseShader(const char* path) const
 {
 	std::fstream stream(path);
@@ -31,11 +34,17 @@ unsigned int Shader::CreateShader(const char* vertPath, const char* fragPath) co
 	glLinkProgram(program);
 	glValidateProgram(program);
 
+	glDeleteShader(vert);
+	glDeleteShader(frag);
+
 	return program;
 }
 
 void Shader::Bind() const
 {
+	// TODO: add assert
+	if (m_ID == 0)
+		std::cout << "WARNING: shader is not initialized" << std::endl;
 	glUseProgram(m_ID);
 }
 
@@ -59,6 +68,16 @@ void Shader::SetVec3f(const char* name, float v0, float v1, float v2) const
 	glUniform3f(GetLocation(name), v0, v1, v2);
 }
 
+void Shader::SetVec4f(const char* name, glm::vec4 v) const
+{
+	glUniform4f(GetLocation(name), v.x, v.y, v.z, v.w);
+}
+
+void Shader::SetVec4f(const char* name, float v0, float v1, float v2, float v3) const
+{
+	glUniform4f(GetLocation(name), v0, v1, v2, v3);
+}
+
 void Shader::SetInt(const char* name, int v) const
 {
 	glUniform1i(GetLocation(name), v);
@@ -77,7 +96,10 @@ Shader::Shader(const char* vertPath, const char* fragPath)
 
 Shader::~Shader()
 {
-	glDeleteProgram(m_ID);
+	if (m_ID != 0)
+	{
+		glDeleteProgram(m_ID);
+	}
 }
 
 unsigned int Shader::CompileShader(unsigned int type, const std::string& source) const
