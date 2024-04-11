@@ -94,7 +94,7 @@ CubeMap::CubeMap(std::vector<std::string> faces) : m_ID(0), m_VAO(0), m_VBO(0)
 
 void CubeMap::Draw(const Shader& shader) const
 {
-	glDepthMask(GL_FALSE);
+	glDepthFunc(GL_LEQUAL);
 	shader.Bind();
 	shader.SetInt("texture1", 0);
 
@@ -102,7 +102,6 @@ void CubeMap::Draw(const Shader& shader) const
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, m_ID);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
-	glBindVertexArray(m_VBO);
 	glDepthFunc(GL_LESS);
 }
 

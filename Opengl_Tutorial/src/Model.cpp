@@ -17,7 +17,7 @@ Model::Model(const std::string& path)
 void Model::Draw(const Shader& shader) const
 {
 	for (auto& mesh : m_Meshes)
-		mesh.Draw(shader);
+		mesh->Draw(shader);
 }
 
 void Model::LoadModel(const std::string& path)
@@ -46,7 +46,7 @@ void Model::ProcessNode(const aiNode* node, const aiScene* scene)
 		ProcessNode(node->mChildren[i], scene);
 }
 
-Mesh Model::ProcessMesh(const aiMesh* mesh, const aiScene* scene)
+std::unique_ptr<Mesh> Model::ProcessMesh(const aiMesh* mesh, const aiScene* scene)
 {
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
@@ -99,7 +99,7 @@ Mesh Model::ProcessMesh(const aiMesh* mesh, const aiScene* scene)
 		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 	}
 
-	return Mesh(vertices, indices, textures);
+	return std::unique_ptr<Mesh>(new Mesh(vertices, indices, textures));
 }
 
 std::vector<Texture> Model::LoadMaterialTextures(const aiMaterial* mat, aiTextureType type, const std::string& typeName)

@@ -28,6 +28,13 @@ Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>&
 	glBindVertexArray(0);
 }
 
+Mesh::~Mesh()
+{
+	glDeleteBuffers(1, &m_VBO);
+	glDeleteBuffers(1, &m_EBO);
+	glDeleteVertexArrays(1, &m_VAO);
+}
+
 void Mesh::Draw(const Shader& shader) const
 {
 	unsigned int diffuseNr = 1;

@@ -64,12 +64,12 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
 	{
 		isDragging = true;
 		isFirstMouse = true;
 	}
-	else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
+	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE)
 		isDragging = false;
 }
 
@@ -118,7 +118,7 @@ int main()
 
 	Shader shader("res/shaders/basic.vert", "res/shaders/basic.frag");
 	Shader skyboxShader("res/shaders/skybox.vert", "res/shaders/skybox.frag");
-	Model ourModel("res/textures/backpack/backpack.obj");
+	//Model ourModel("res/textures/backpack/backpack.obj");
 	std::vector<std::string> faces = {
 		"res/textures/skybox/right.jpg",
 		"res/textures/skybox/left.jpg",
@@ -132,6 +132,33 @@ int main()
 	glm::vec3 ambient(0.5f, 0.5f, 0.5f);
 	glm::vec3 diffuse(0.5f, 0.5f, 0.5f);
 	glm::vec3 specular(1.0f, 1.0f, 1.0f);
+
+	float positions[] = {
+		-1.0f, 0.0f, -1.0f,
+		-1.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, -1.0f,
+		1.0f, 0.0f, 1.0f
+	};
+
+	unsigned int indices[] = {
+		0, 1, 3,
+		3, 2, 0
+	};
+
+	unsigned int groundVAO, groundVBO, groundEBO;
+	glGenVertexArrays(1, &groundVAO);
+	glBindVertexArray(groundVAO);
+
+	glGenBuffers(1, &groundVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, groundVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &groundEBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, groundEBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 
 	while (!glfwWindowShouldClose(window))
@@ -172,13 +199,15 @@ int main()
 		shader.SetVec3f("dirLight.diffuse", diffuse);
 		shader.SetVec3f("dirLight.specular", specular);
 
-
 		//ourModel.Draw(shader);
+		glBindVertexArray(groundVAO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		skyboxShader.Bind();
 		skyboxShader.SetMat4f("u_Proj", projection);
 		skyboxShader.SetMat4f("u_View", glm::mat4(glm::mat3(camera.GetViewMatrix())));
 		cubeMap.Draw(skyboxShader);
+
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
