@@ -13,8 +13,8 @@
 #include <iostream>
 #include <stb_image.h>
 
-const unsigned int WIDTH = 800;
-const unsigned int HEIGHT = 600;
+const unsigned int WIDTH = 1280;
+const unsigned int HEIGHT = 760;
 
 Camera camera(0, 0, 1);
 

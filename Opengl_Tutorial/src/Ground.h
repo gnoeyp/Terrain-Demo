@@ -5,7 +5,7 @@
 class Ground
 {
 private:
-	unsigned int m_VAO, m_VBO, m_EBO;
+	unsigned int m_Tex, m_VAO, m_VBO, m_EBO;
 public:
 	Ground();
 	~Ground();
