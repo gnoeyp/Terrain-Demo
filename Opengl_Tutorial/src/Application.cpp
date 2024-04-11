@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "CubeMap.h"
 #include "Model.h"
 #include "Shader.h"
 #include <GL/glew.h>
@@ -116,11 +117,22 @@ int main()
 	ImGui_ImplOpenGL3_Init();
 
 	Shader shader("res/shaders/basic.vert", "res/shaders/basic.frag");
-	Model ourModel("res/textures/backpack.obj");
+	Shader skyboxShader("res/shaders/skybox.vert", "res/shaders/skybox.frag");
+	Model ourModel("res/textures/backpack/backpack.obj");
+	std::vector<std::string> faces = {
+		"res/textures/skybox/right.jpg",
+		"res/textures/skybox/left.jpg",
+		"res/textures/skybox/top.jpg",
+		"res/textures/skybox/bottom.jpg",
+		"res/textures/skybox/front.jpg",
+		"res/textures/skybox/back.jpg",
+	};
+	CubeMap cubeMap(faces);
 
 	glm::vec3 ambient(0.5f, 0.5f, 0.5f);
 	glm::vec3 diffuse(0.5f, 0.5f, 0.5f);
 	glm::vec3 specular(1.0f, 1.0f, 1.0f);
+
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -161,8 +173,12 @@ int main()
 		shader.SetVec3f("dirLight.specular", specular);
 
 
-		ourModel.Draw(shader);
+		//ourModel.Draw(shader);
 
+		skyboxShader.Bind();
+		skyboxShader.SetMat4f("u_Proj", projection);
+		skyboxShader.SetMat4f("u_View", glm::mat4(glm::mat3(camera.GetViewMatrix())));
+		cubeMap.Draw(skyboxShader);
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

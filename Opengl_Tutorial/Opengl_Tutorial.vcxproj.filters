@@ -60,6 +60,9 @@
     <ClCompile Include="vendor\imgui\backends\imgui_impl_glfw.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="src\CubeMap.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dependencies\GLEW\include\GL\eglew.h">
@@ -990,6 +993,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="vendor\imgui\backends\imgui_impl_glfw.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CubeMap.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -2237,6 +2243,8 @@
     <None Include="res\shaders\basic.vert" />
     <None Include="res\shaders\basic.frag" />
     <None Include="vendor\imgui\misc\debuggers\imgui.natstepfilter" />
+    <None Include="res\shaders\skybox.vert" />
+    <None Include="res\shaders\skybox.frag" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="vendor\imgui\misc\debuggers\imgui.natvis" />
