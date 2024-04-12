@@ -6,6 +6,7 @@
 
 Shader* Shader::BASIC = nullptr;
 Shader* Shader::BASIC_TEXTURE = nullptr;
+Shader* Shader::HEIGHTMAP = nullptr;
 
 std::string Shader::ParseShader(const char* path) const
 {

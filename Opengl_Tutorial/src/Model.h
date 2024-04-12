@@ -11,6 +11,7 @@ class Model
 public:
 	Model(const std::string& path);
 	void Draw(const Shader& shader) const;
+	static unsigned int TextureFromFile(const char* path, const std::string& directory, bool gamma = false);
 private:
 	std::vector<std::unique_ptr<Mesh>> m_Meshes;
 	std::vector<Texture> m_TexturesLoaded;

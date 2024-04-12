@@ -66,6 +66,9 @@
     <ClCompile Include="src\Ground.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="src\Terrain.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dependencies\GLEW\include\GL\eglew.h">
@@ -1002,6 +1005,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="src\Ground.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Terrain.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -2253,6 +2259,8 @@
     <None Include="res\shaders\skybox.frag" />
     <None Include="res\shaders\basic.vert" />
     <None Include="res\shaders\basic.frag" />
+    <None Include="res\shaders\heightmap.vert" />
+    <None Include="res\shaders\heightmap.frag" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="vendor\imgui\misc\debuggers\imgui.natvis" />

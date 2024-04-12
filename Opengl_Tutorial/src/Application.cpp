@@ -3,6 +3,7 @@
 #include "Ground.h"
 #include "Model.h"
 #include "Shader.h"
+#include "Terrain.h"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -12,6 +13,28 @@
 #include <imgui_impl_opengl3.h>
 #include <iostream>
 #include <stb_image.h>
+
+#define ASSERT(x) if (!(x)) __debugbreak();
+#define GLCall(x) GLClearError();\
+	x;\
+	ASSERT(GLLogError(#x, __FILE__, __LINE__))
+
+void GLClearError()
+{
+	while (glGetError() != GL_NO_ERROR) {}
+}
+
+bool GLLogError(const char* function, const char* path, int line)
+{
+	int error;
+	if ((error = glGetError()) != GL_NO_ERROR)
+	{
+		std::cout << "[OpenGL Error (" << error << ")] '" << function << "', " << path << ": " << line << std::endl;
+		return false;
+	}
+	return true;
+}
+
 
 const unsigned int WIDTH = 1280;
 const unsigned int HEIGHT = 760;
@@ -106,6 +129,9 @@ int main()
 	stbi_set_flip_vertically_on_load(true);
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_ALPHA_TEST);
 
 	Shader::Init();
 
@@ -138,6 +164,7 @@ int main()
 	glm::vec3 specular(1.0f, 1.0f, 1.0f);
 
 	Ground ground;
+	Terrain terrain;
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -157,7 +184,7 @@ int main()
 
 		processInput(window);
 
-		glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//Shader::BASIC_TEXTURE.Bind();
@@ -183,6 +210,15 @@ int main()
 		Shader::BASIC->SetMat4f("u_View", camera.GetViewMatrix());
 
 		ground.Draw(*Shader::BASIC);
+
+		Shader::HEIGHTMAP->Bind();
+		Shader::HEIGHTMAP->SetMat4f("u_Proj", projection);
+		Shader::HEIGHTMAP->SetMat4f("u_Model", model);
+		Shader::HEIGHTMAP->SetMat4f("u_View", camera.GetViewMatrix());
+		Shader::HEIGHTMAP->SetVec3f("u_ViewPos", camera.GetPosition());
+
+		terrain.Draw();
+
 
 		skyboxShader.Bind();
 		skyboxShader.SetMat4f("u_Proj", projection);

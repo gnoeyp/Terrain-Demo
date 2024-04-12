@@ -6,7 +6,7 @@
 #include <iostream>
 #include <stb_image.h>
 
-unsigned int TextureFromFile(const char* path, const std::string& directory, bool gamma = false);
+//unsigned int Model::TextureFromFile(const char* path, const std::string& directory, bool gamma = false);
 
 Model::Model(const std::string& path)
 {
@@ -135,7 +135,7 @@ std::vector<Texture> Model::LoadMaterialTextures(const aiMaterial* mat, aiTextur
 	return textures;
 }
 
-unsigned int TextureFromFile(const char* path, const std::string& directory, bool gamma)
+unsigned int Model::TextureFromFile(const char* path, const std::string& directory, bool gamma)
 {
 	std::string filename = directory + '/' + std::string(path);
 
