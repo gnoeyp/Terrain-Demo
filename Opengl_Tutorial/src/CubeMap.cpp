@@ -1,4 +1,5 @@
 #include "CubeMap.h"
+#include "GLUtils.h"
 #include <GL/glew.h>
 #include <iostream>
 #include <stb_image.h>
@@ -67,22 +68,73 @@ CubeMap::CubeMap(std::vector<std::string> faces) : m_ID(0), m_VAO(0), m_VBO(0)
 	int width, height, nrChannels;
 
 	stbi_set_flip_vertically_on_load(false);
-	for (unsigned int i = 0; i < faces.size(); i++)
+
+	unsigned char* data = stbi_load("res/textures/skybox.png", &width, &height, &nrChannels, 0);
+	int sWidth = width / 4;
+	int sHeight = height / 3;
+
+	//"res/textures/skybox/right.jpg",
+	//"res/textures/skybox/left.jpg",
+	//"res/textures/skybox/top.jpg",
+	//"res/textures/skybox/bottom.jpg",
+	//"res/textures/skybox/front.jpg",
+	//"res/textures/skybox/back.jpg",
+	int coords[6][2] = { {2 , 1}, {0, 1}, {1, 0}, {1, 2 }, { 1, 1 }, { 3 , 1 } };
+
+	unsigned int format;
+	switch (nrChannels)
 	{
-		unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
-		if (data)
-		{
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-				0, GL_RGBA, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data
-			);
-			stbi_image_free(data);
-		}
-		else
-		{
-			std::cout << "Cubemap tex failed to load at path: " << faces[i] << std::endl;
-			stbi_image_free(data);
-		}
+	case 1:
+		format = GL_RED;
+		break;
+	case 3:
+		format = GL_RGB;
+		break;
+	case 4:
+		format = GL_RGBA;
+		break;
+	default:
+		ASSERT(false);
 	}
+
+	unsigned char* sData = new unsigned char[sWidth * sHeight * nrChannels];
+	for (unsigned int i = 0; i < 6; i++)
+	{
+		for (unsigned int y = 0; y < sHeight; y++)
+		{
+			for (unsigned int x = 0; x < sWidth; x++)
+			{
+				for (unsigned int c = 0; c < nrChannels; c++)
+				{
+					//sData[(y * sWidth + x) * nrChannels] = 1;
+					sData[(y * sWidth + x) * nrChannels + c] = data[((4 * sWidth) * (coords[i][1] * sHeight + y) + coords[i][0] * sWidth + x) * nrChannels + c];
+				}
+			}
+		}
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+			0, GL_RGBA, sWidth, sHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, sData
+		);
+	}
+	delete[] sData;
+	stbi_image_free(data);
+
+
+	//for (unsigned int i = 0; i < faces.size(); i++)
+	//{
+	//	unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
+	//	if (data)
+	//	{
+	//		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+	//			0, GL_RGBA, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data
+	//		);
+	//		stbi_image_free(data);
+	//	}
+	//	else
+	//	{
+	//		std::cout << "Cubemap tex failed to load at path: " << faces[i] << std::endl;
+	//		stbi_image_free(data);
+	//	}
+	//}
 	stbi_set_flip_vertically_on_load(true);
 
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

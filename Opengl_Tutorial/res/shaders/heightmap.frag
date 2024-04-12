@@ -28,10 +28,14 @@ void main()
 
 	float fogStart = 10.0f;
 	float fogEnd = 500.0f;
-	vec4 fogColor = vec4(0.5f, 0.5f, 0.5f, 1.0f);
+	vec4 fogColor = vec4(0.59, 0.69, 0.85, 1.0f);
 	float distance = length(FragPos - u_ViewPos);
 	float visibility = 1.0;
 	visibility = max(min((fogEnd - distance) / (fogEnd - fogStart), 1.0), 0.0);
 
 	color = mix(fogColor, texColor, visibility);
+
+	if (distance > 500.0)
+		discard;
+		
 }

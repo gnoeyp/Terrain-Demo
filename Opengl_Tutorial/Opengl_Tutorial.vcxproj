@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\CubeMap.cpp" />
+    <ClCompile Include="src\GLUtils.cpp" />
     <ClCompile Include="src\Ground.cpp" />
     <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
@@ -160,6 +161,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\CubeMap.h" />
+    <ClInclude Include="src\GLUtils.h" />
     <ClInclude Include="src\Ground.h" />
     <ClInclude Include="src\Model.h" />
     <ClInclude Include="src\Mesh.h" />

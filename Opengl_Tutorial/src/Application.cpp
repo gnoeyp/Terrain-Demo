@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "CubeMap.h"
+#include "GLUtils.h"
 #include "Ground.h"
 #include "Model.h"
 #include "Shader.h"
@@ -14,26 +15,6 @@
 #include <iostream>
 #include <stb_image.h>
 
-#define ASSERT(x) if (!(x)) __debugbreak();
-#define GLCall(x) GLClearError();\
-	x;\
-	ASSERT(GLLogError(#x, __FILE__, __LINE__))
-
-void GLClearError()
-{
-	while (glGetError() != GL_NO_ERROR) {}
-}
-
-bool GLLogError(const char* function, const char* path, int line)
-{
-	int error;
-	if ((error = glGetError()) != GL_NO_ERROR)
-	{
-		std::cout << "[OpenGL Error (" << error << ")] '" << function << "', " << path << ": " << line << std::endl;
-		return false;
-	}
-	return true;
-}
 
 
 const unsigned int WIDTH = 1280;
