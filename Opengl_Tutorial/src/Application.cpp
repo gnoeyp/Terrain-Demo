@@ -126,19 +126,9 @@ int main()
 	ImGui_ImplGlfw_InitForOpenGL(window, true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
 	ImGui_ImplOpenGL3_Init();
 
-	//Shader shader("res/shaders/basic.vert", "res/shaders/basic.frag");
 	Shader skyboxShader("res/shaders/skybox.vert", "res/shaders/skybox.frag");
 	Shader groundShader("res/shaders/basic.vert", "res/shaders/basic.frag");
-	//Model ourModel("res/textures/backpack/backpack.obj");
-	std::vector<std::string> faces = {
-		"res/textures/skybox/right.jpg",
-		"res/textures/skybox/left.jpg",
-		"res/textures/skybox/top.jpg",
-		"res/textures/skybox/bottom.jpg",
-		"res/textures/skybox/front.jpg",
-		"res/textures/skybox/back.jpg",
-	};
-	CubeMap cubeMap(faces);
+	CubeMap cubeMap("res/textures/skybox.png");
 
 	glm::vec3 ambient(0.5f, 0.5f, 0.5f);
 	glm::vec3 diffuse(0.5f, 0.5f, 0.5f);
@@ -147,6 +137,7 @@ int main()
 	Ground ground;
 	Terrain terrain;
 
+	int terrainTexture = 0;
 	while (!glfwWindowShouldClose(window))
 	{
 		float currentFrame = glfwGetTime();
@@ -162,6 +153,12 @@ int main()
 		ImGui::ColorEdit3("Ambient", &ambient[0]);
 		ImGui::ColorEdit3("Diffuse", &diffuse[0]);
 		ImGui::ColorEdit3("Specular", &specular[0]);
+		ImGui::RadioButton("Terrain texture 1", &terrainTexture, 0);
+		ImGui::SameLine();
+		ImGui::RadioButton("Terrain texture 2", &terrainTexture, 1);
+		ImGui::SameLine();
+		ImGui::RadioButton("Terrain texture 3", &terrainTexture, 2);
+
 
 		processInput(window);
 
@@ -198,8 +195,9 @@ int main()
 		Shader::HEIGHTMAP->SetMat4f("u_View", camera.GetViewMatrix());
 		Shader::HEIGHTMAP->SetVec3f("u_ViewPos", camera.GetPosition());
 
-		terrain.Draw();
+		Shader::HEIGHTMAP->SetInt("u_TextureMethodType", terrainTexture);
 
+		terrain.Draw();
 
 		skyboxShader.Bind();
 		skyboxShader.SetMat4f("u_Proj", projection);

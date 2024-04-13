@@ -23,8 +23,10 @@ Terrain::Terrain()
 			vertices.push_back((int)y * yScale - yShift);
 			vertices.push_back(-width / 2.0f + j);
 
-			vertices.push_back((float)(j % 2));
-			vertices.push_back((float)(i % 2));
+			//vertices.push_back((float)(j % 2));
+			//vertices.push_back((float)(i % 2));
+			vertices.push_back((float)j);
+			vertices.push_back((float)i);
 		}
 	}
 	stbi_image_free(data);
