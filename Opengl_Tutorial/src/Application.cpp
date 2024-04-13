@@ -131,22 +131,30 @@ int main()
 	Shader groundShader("res/shaders/basic.vert", "res/shaders/basic.frag");
 	CubeMap cubeMap("res/textures/skybox.png");
 
+	glm::vec3 lightDirection(-0.2f, -1.0f, -0.3f);
 	glm::vec3 ambient(0.5f, 0.5f, 0.5f);
 	glm::vec3 diffuse(0.5f, 0.5f, 0.5f);
 	glm::vec3 specular(1.0f, 1.0f, 1.0f);
 
 	Ground ground;
 	Terrain terrain;
+	Model ourModel("res/textures/backpack/backpack.obj");
 
 	int terrainTexture = 0;
 
 	std::vector<unsigned int> sizes = { sizeof(glm::mat4), sizeof(glm::mat4) };
-	UniformBlock matrixUbo(sizes, "u_Matrices");
+	UniformBlock matrixUbo({ sizeof(glm::mat4), sizeof(glm::mat4) }, "u_Matrices");
+	UniformBlock dirLightUbo(
+		{ sizeof(glm::vec3), sizeof(glm::vec3), sizeof(glm::vec3), sizeof(glm::vec3) },
+		"u_DirLight"
+	);
 
 	matrixUbo.BindShader(Shader::HEIGHTMAP);
 	matrixUbo.BindShader(Shader::BASIC);
 	matrixUbo.BindShader(Shader::BASIC_TEXTURE);
 	matrixUbo.BindShader(groundShader);
+
+	dirLightUbo.BindShader(Shader::BASIC_TEXTURE);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -175,26 +183,26 @@ int main()
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//Shader::BASIC_TEXTURE.Bind();
+		Shader::BASIC_TEXTURE->Bind();
 
 		glm::mat4 projection = glm::perspective(glm::radians(camera.GetZoom()), (float)WIDTH / (float)HEIGHT, 0.1f, 1000.0f);
+		glm::mat4 view = camera.GetViewMatrix();
 		matrixUbo.SetData(0, &projection[0][0]);
-		matrixUbo.SetData(1, &(camera.GetViewMatrix()[0][0]));
-		//Shader::BASIC_TEXTURE.SetMat4f("u_Proj", projection);
+		matrixUbo.SetData(1, &view[0][0]);
+
+		dirLightUbo.SetData(0, &lightDirection[0]);
+		dirLightUbo.SetData(1, &ambient[0]);
+		dirLightUbo.SetData(2, &diffuse[0]);
+		dirLightUbo.SetData(3, &specular[0]);
+
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
-		//Shader::BASIC_TEXTURE.SetMat4f("u_Model", model);
-		//Shader::BASIC_TEXTURE.SetMat4f("u_View", camera.GetViewMatrix());
+		Shader::BASIC_TEXTURE->SetMat4f("u_Model", model);
 
-		//Shader::BASIC_TEXTURE.SetVec3f("viewPos", camera.GetPosition());
-		//Shader::BASIC_TEXTURE.SetVec3f("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
-		//Shader::BASIC_TEXTURE.SetVec3f("dirLight.ambient", ambient);
-		//Shader::BASIC_TEXTURE.SetVec3f("dirLight.diffuse", diffuse);
-		//Shader::BASIC_TEXTURE.SetVec3f("dirLight.specular", specular);
+		Shader::BASIC_TEXTURE->SetVec3f("viewPos", camera.GetPosition());
 
-		//ourModel.Draw(shader);
-
+		ourModel.Draw(*Shader::BASIC_TEXTURE);
 
 		Shader::BASIC->Bind();
 		Shader::BASIC->SetMat4f("u_Model", model);
