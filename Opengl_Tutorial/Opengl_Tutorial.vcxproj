@@ -148,6 +148,7 @@
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Terrain.cpp" />
+    <ClCompile Include="src\UniformBlock.cpp" />
     <ClCompile Include="vendor\glm\glm\detail\glm.cpp" />
     <ClCompile Include="vendor\imgui\backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="vendor\imgui\backends\imgui_impl_opengl3.cpp" />
@@ -174,6 +175,7 @@
     <ClInclude Include="dependencies\GLFW\include\GLFW\glfw3native.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\Terrain.h" />
+    <ClInclude Include="src\UniformBlock.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\compute_common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\compute_vector_decl.hpp" />

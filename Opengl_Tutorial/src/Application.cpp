@@ -5,6 +5,7 @@
 #include "Model.h"
 #include "Shader.h"
 #include "Terrain.h"
+#include "UniformBlock.h"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -138,6 +139,15 @@ int main()
 	Terrain terrain;
 
 	int terrainTexture = 0;
+
+	std::vector<unsigned int> sizes = { sizeof(glm::mat4), sizeof(glm::mat4) };
+	UniformBlock matrixUbo(sizes, "u_Matrices");
+
+	matrixUbo.BindShader(Shader::HEIGHTMAP);
+	matrixUbo.BindShader(Shader::BASIC);
+	matrixUbo.BindShader(Shader::BASIC_TEXTURE);
+	matrixUbo.BindShader(groundShader);
+
 	while (!glfwWindowShouldClose(window))
 	{
 		float currentFrame = glfwGetTime();
@@ -168,6 +178,8 @@ int main()
 		//Shader::BASIC_TEXTURE.Bind();
 
 		glm::mat4 projection = glm::perspective(glm::radians(camera.GetZoom()), (float)WIDTH / (float)HEIGHT, 0.1f, 1000.0f);
+		matrixUbo.SetData(0, &projection[0][0]);
+		matrixUbo.SetData(1, &(camera.GetViewMatrix()[0][0]));
 		//Shader::BASIC_TEXTURE.SetMat4f("u_Proj", projection);
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
@@ -182,17 +194,15 @@ int main()
 		//Shader::BASIC_TEXTURE.SetVec3f("dirLight.specular", specular);
 
 		//ourModel.Draw(shader);
+
+
 		Shader::BASIC->Bind();
-		Shader::BASIC->SetMat4f("u_Proj", projection);
 		Shader::BASIC->SetMat4f("u_Model", model);
-		Shader::BASIC->SetMat4f("u_View", camera.GetViewMatrix());
 
 		ground.Draw(*Shader::BASIC);
 
 		Shader::HEIGHTMAP->Bind();
-		Shader::HEIGHTMAP->SetMat4f("u_Proj", projection);
 		Shader::HEIGHTMAP->SetMat4f("u_Model", model);
-		Shader::HEIGHTMAP->SetMat4f("u_View", camera.GetViewMatrix());
 		Shader::HEIGHTMAP->SetVec3f("u_ViewPos", camera.GetPosition());
 
 		Shader::HEIGHTMAP->SetInt("u_TextureMethodType", terrainTexture);

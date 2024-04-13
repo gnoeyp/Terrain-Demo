@@ -90,6 +90,12 @@ int Shader::GetLocation(const char* name) const
 	return location;
 }
 
+void Shader::BindUniformBlock(const char* name)
+{
+	unsigned int index = glGetUniformBlockIndex(m_ID, name);
+	glUniformBlockBinding(m_ID, index, m_UniformBindingIndex++);
+}
+
 Shader::Shader(const char* vertPath, const char* fragPath)
 {
 	m_ID = CreateShader(vertPath, fragPath);

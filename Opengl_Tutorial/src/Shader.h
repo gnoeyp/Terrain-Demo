@@ -8,6 +8,7 @@ class Shader
 {
 private:
 	unsigned int m_ID;
+	unsigned int m_UniformBindingIndex;
 public:
 	Shader(const char* vertPath, const char* fragPath);
 	~Shader();
@@ -28,6 +29,8 @@ public:
 	void SetVec4f(const char* name, float v0, float v1, float v2, float v3) const;
 	void SetInt(const char* name, int v) const;
 	int GetLocation(const char* name) const;
+	inline unsigned int GetID() const { return m_ID; }
+	void BindUniformBlock(const char* name);
 
 	static void Init()
 	{
