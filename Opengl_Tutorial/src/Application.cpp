@@ -21,7 +21,7 @@
 const unsigned int WIDTH = 1280;
 const unsigned int HEIGHT = 760;
 
-Camera camera(0, 0, 1);
+Camera camera(0.0f, 10.0f, 0.0f);
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
