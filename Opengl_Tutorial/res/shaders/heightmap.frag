@@ -9,15 +9,28 @@ struct DirLight
 	vec3 specular;
 };
 
+layout (std140) uniform u_DirLight
+{
+	vec3 direction;
+
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+};
+
 out vec4 color;
 
-in float Height;
 in vec2 TexCoord;
 in vec3 FragPos;
+in vec3 TangentLightPos;
+in vec3 TangentViewPos;
+in vec3 TangentFragPos;
 
 uniform sampler2D u_Texture;
-uniform DirLight dirLight;
+uniform sampler2D u_NormalTexture;
+
 uniform vec3 u_ViewPos;
+uniform vec3 u_FogColor;
 uniform int u_TextureMethodType = 0;
 
 vec4 hash4( vec2 p ) { return fract(sin(vec4( 1.0+dot(p,vec2(37.0,17.0)), 
@@ -129,29 +142,41 @@ vec4 textureOffset( sampler2D samp, vec2 x )
 void main()
 {
 	float ambientStrength = 0.1f;
-	vec3 ambientColor = ambientStrength * dirLight.ambient;
+	vec3 ambientColor = ambientStrength * ambient;
 
     vec4 texColor;
+    vec3 norm;
     switch(u_TextureMethodType)
     {
     case 0:
 		texColor = textureRotation(u_Texture, TexCoord);
+        norm = textureRotation(u_NormalTexture, TexCoord).rgb;
 		break;
     case 1:
 		texColor = textureVoronoi(u_Texture, TexCoord);
+        norm = textureVoronoi(u_NormalTexture, TexCoord).rgb;
 		break;
     case 2:
 		texColor = textureOffset(u_Texture, TexCoord);
+        norm = textureOffset(u_NormalTexture, TexCoord).rgb;
     }
 
 	float fogStart = 10.0f;
 	float fogEnd = 500.0f;
-	vec4 fogColor = vec4(0.59, 0.69, 0.85, 1.0f);
+	vec4 fogColor = vec4(u_FogColor, 1.0);
 	float distance = length(FragPos - u_ViewPos);
 	float visibility = 1.0;
 	visibility = max(min((fogEnd - distance) / (fogEnd - fogStart), 1.0), 0.0);
 
-	color = mix(fogColor, texColor, visibility);
+	texColor = mix(fogColor, texColor, visibility);
+
+    // diffuse
+    norm = normalize(norm * 2.0 - 1.0);
+    vec3 lightDir = normalize(TangentLightPos - TangentFragPos);
+	float diff = max(dot(norm, lightDir), 0.0);
+    vec3 diffuseColor = diffuse * diff;
+
+	color = vec4(ambientColor, 1.0) + vec4(diffuseColor, 1.0) * texColor;
 
 	if (distance > 500.0)
 		discard;

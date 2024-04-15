@@ -9,6 +9,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <glm/matrix.hpp>
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
@@ -129,15 +130,30 @@ int main()
 
 	Shader skyboxShader("res/shaders/skybox.vert", "res/shaders/skybox.frag");
 	Shader groundShader("res/shaders/basic.vert", "res/shaders/basic.frag");
-	CubeMap cubeMap("res/textures/skybox.png");
+
+	std::vector<std::string> faces = {
+		"res/textures/skybox_miramar/miramar_ft.tga",
+		"res/textures/skybox_miramar/miramar_bk.tga",
+		"res/textures/skybox_miramar/miramar_up.tga",
+		"res/textures/skybox_miramar/miramar_dn.tga",
+		"res/textures/skybox_miramar/miramar_rt.tga",
+		"res/textures/skybox_miramar/miramar_lf.tga"
+	};
+	//CubeMap cubeMap("res/textures/skybox.png");
+	CubeMap cubeMap(faces);
 
 	glm::vec3 lightDirection(-0.2f, -1.0f, -0.3f);
+	glm::vec3 lightPos(-0.2f, -1.0f, -0.3f);
 	glm::vec3 ambient(0.5f, 0.5f, 0.5f);
 	glm::vec3 diffuse(0.5f, 0.5f, 0.5f);
 	glm::vec3 specular(1.0f, 1.0f, 1.0f);
 
 	Ground ground;
-	Terrain terrain;
+	Terrain terrain(
+		"res/textures/iceland_heightmap.png",
+		"res/textures/mud_cracked_dry/mud_cracked_dry_03_diff_1k.jpg",
+		"res/textures/mud_cracked_dry/AnyConv.com__mud_cracked_dry_03_nor_gl_1k.png"
+	);
 	Model ourModel("res/textures/backpack/backpack.obj");
 
 	int terrainTexture = 0;
@@ -145,7 +161,8 @@ int main()
 	std::vector<unsigned int> sizes = { sizeof(glm::mat4), sizeof(glm::mat4) };
 	UniformBlock matrixUbo({ sizeof(glm::mat4), sizeof(glm::mat4) }, "u_Matrices");
 	UniformBlock dirLightUbo(
-		{ sizeof(glm::vec3), sizeof(glm::vec3), sizeof(glm::vec3), sizeof(glm::vec3) },
+		// base alignment of vec3 is 16
+		{ 16, 16, 16, 16 },
 		"u_DirLight"
 	);
 
@@ -155,6 +172,7 @@ int main()
 	matrixUbo.BindShader(groundShader);
 
 	dirLightUbo.BindShader(Shader::BASIC_TEXTURE);
+	dirLightUbo.BindShader(Shader::HEIGHTMAP);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -169,14 +187,16 @@ int main()
 		if (ImGui::Button("Save"))
 			std::cout << "Save button preessed" << std::endl;
 		ImGui::ColorEdit3("Ambient", &ambient[0]);
-		ImGui::ColorEdit3("Diffuse", &diffuse[0]);
+		ImGui::ColorEdit3("Diffuse", glm::value_ptr(diffuse));
 		ImGui::ColorEdit3("Specular", &specular[0]);
+		ImGui::SliderFloat("Light position X", &lightPos.x, -100.0f, 100.0f);
+		ImGui::SliderFloat("Light position Y", &lightPos.y, -100.0f, 100.0f);
+		ImGui::SliderFloat("Light position Z", &lightPos.z, -100.0f, 100.0f);
 		ImGui::RadioButton("Terrain texture 1", &terrainTexture, 0);
 		ImGui::SameLine();
 		ImGui::RadioButton("Terrain texture 2", &terrainTexture, 1);
 		ImGui::SameLine();
 		ImGui::RadioButton("Terrain texture 3", &terrainTexture, 2);
-
 
 		processInput(window);
 
@@ -192,7 +212,7 @@ int main()
 
 		dirLightUbo.SetData(0, &lightDirection[0]);
 		dirLightUbo.SetData(1, &ambient[0]);
-		dirLightUbo.SetData(2, &diffuse[0]);
+		dirLightUbo.SetData(2, glm::value_ptr(diffuse));
 		dirLightUbo.SetData(3, &specular[0]);
 
 		glm::mat4 model = glm::mat4(1.0f);
@@ -200,7 +220,7 @@ int main()
 		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
 		Shader::BASIC_TEXTURE->SetMat4f("u_Model", model);
 
-		Shader::BASIC_TEXTURE->SetVec3f("viewPos", camera.GetPosition());
+		Shader::BASIC_TEXTURE->SetVec3f("u_ViewPos", camera.GetPosition());
 
 		ourModel.Draw(*Shader::BASIC_TEXTURE);
 
@@ -214,8 +234,10 @@ int main()
 		Shader::HEIGHTMAP->SetVec3f("u_ViewPos", camera.GetPosition());
 
 		Shader::HEIGHTMAP->SetInt("u_TextureMethodType", terrainTexture);
+		Shader::HEIGHTMAP->SetVec3f("u_FogColor", 0.35f, 0.46f, 0.56f);
+		Shader::HEIGHTMAP->SetVec3f("u_LightPos", lightPos);
 
-		terrain.Draw();
+		terrain.Draw(*Shader::HEIGHTMAP);
 
 		skyboxShader.Bind();
 		skyboxShader.SetMat4f("u_Proj", projection);
