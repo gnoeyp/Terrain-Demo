@@ -1,9 +1,9 @@
-#version 330 core
+#version 410 core
 
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec2 aTexCoord;
 layout (location = 2) in vec3 aOffset;
-layout (location = 3) in vec3 aColor;
+layout (location = 3) in vec4 aColor;
 
 layout (std140) uniform u_Matrices
 {
@@ -15,7 +15,7 @@ uniform mat4 u_Model;
 uniform vec3 u_CameraFront;
 uniform vec3 u_CameraUp;
 
-out vec3 fColor;
+out vec4 fColor;
 out vec2 TexCoord;
 
 void main()

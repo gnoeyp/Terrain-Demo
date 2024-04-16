@@ -9,8 +9,12 @@ class Shader
 private:
 	unsigned int m_ID;
 	unsigned int m_UniformBindingIndex;
+
+	unsigned int CompileShader(unsigned int type, const std::string& source) const;
+	std::string ParseShader(const char* path) const;
+	unsigned int CreateShader(const char* vertPath, const char* fragPath, const char* tcsPath, const char* tesPath) const;
 public:
-	Shader(const char* vertPath, const char* fragPath);
+	Shader(const char* vertPath, const char* fragPath, const char* tcsPath = nullptr, const char* tesPath = nullptr);
 	~Shader();
 
 	static Shader* BASIC;
@@ -18,9 +22,6 @@ public:
 	static Shader* HEIGHTMAP;
 	static Shader* FIRE;
 
-	unsigned int CompileShader(unsigned int type, const std::string& source) const;
-	std::string ParseShader(const char* path) const;
-	unsigned int CreateShader(const char* vertPath, const char* fragPath) const;
 	void Bind() const;
 	void Unbind() const;
 	void SetMat4f(const char* name, glm::mat4 m) const;

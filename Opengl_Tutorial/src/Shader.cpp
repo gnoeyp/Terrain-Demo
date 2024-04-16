@@ -23,16 +23,33 @@ std::string Shader::ParseShader(const char* path) const
 	return ss.str();
 }
 
-unsigned int Shader::CreateShader(const char* vertPath, const char* fragPath) const
+unsigned int Shader::CreateShader(const char* vertPath, const char* fragPath, const char* tcsPath, const char* tesPath) const
 {
+	unsigned int vert, frag, tsc = 0, tes = 0;
 	std::string vertSource = ParseShader(vertPath);
 	std::string fragSource = ParseShader(fragPath);
-	unsigned int vert = CompileShader(GL_VERTEX_SHADER, vertSource);
-	unsigned int frag = CompileShader(GL_FRAGMENT_SHADER, fragSource);
+	vert = CompileShader(GL_VERTEX_SHADER, vertSource);
+	frag = CompileShader(GL_FRAGMENT_SHADER, fragSource);
+
+	if (tcsPath != nullptr)
+	{
+		std::string source = ParseShader(tcsPath);
+		tsc = CompileShader(GL_TESS_CONTROL_SHADER, tcsPath);
+	}
+
+	if (tesPath != nullptr)
+	{
+		std::string source = ParseShader(tesPath);
+		tes = CompileShader(GL_TESS_EVALUATION_SHADER, tesPath);
+	}
 
 	unsigned int program = glCreateProgram();
 	glAttachShader(program, vert);
 	glAttachShader(program, frag);
+	if (tsc)
+		glAttachShader(program, tsc);
+	if (tes)
+		glAttachShader(program, tes);
 	glLinkProgram(program);
 	glValidateProgram(program);
 
@@ -97,9 +114,9 @@ void Shader::BindUniformBlock(const char* name)
 	glUniformBlockBinding(m_ID, index, m_UniformBindingIndex++);
 }
 
-Shader::Shader(const char* vertPath, const char* fragPath)
+Shader::Shader(const char* vertPath, const char* fragPath, const char* tcsPath, const char* tesPath)
 {
-	m_ID = CreateShader(vertPath, fragPath);
+	m_ID = CreateShader(vertPath, fragPath, tcsPath, tesPath);
 }
 
 Shader::~Shader()

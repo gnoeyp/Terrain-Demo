@@ -177,6 +177,7 @@ Terrain::Terrain(const char* heightmapPath, const char* path, const char* normal
 		}
 	}
 
+
 	//std::vector<unsigned int> indices;
 
 	//for (unsigned int i = 0; i < rez - 1; i++)

@@ -1,19 +1,19 @@
 #include "Camera.h"
 #include "Fire.h"
+#include "GLUtils.h"
 #include "Shader.h"
 #include "Texture.h"
 #include <GL/glew.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/matrix.hpp>
+#include <imgui.h>
+#include <imgui_impl_opengl3.h>
 #include <iostream>
 #include <random>
 #include <stb_image.h>
 
-glm::vec3 Fire::s_Accel = glm::vec3(0.0f, 0.2f, 0.0f);
-unsigned int Fire::s_MaxParticles = 1000;
-
-Fire::Fire()
-	: m_Particles(), m_InstanceVBO(0), m_VBO(0), m_VAO(0), m_EBO(0),
+Fire::Fire(float x, float y, float z)
+	: m_Particles(), m_InstanceVBO(0), m_VBO(0), m_VAO(0), m_EBO(0), m_Position(x, y, z),
 	m_Texture("res/textures/circle.png", { GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR })
 {
 	std::random_device rd;
@@ -32,13 +32,14 @@ Fire::Fire()
 	instanceAttributes.push_back(1.0f);
 	instanceAttributes.push_back(0.0f);
 	instanceAttributes.push_back(0.0f);
+	instanceAttributes.push_back(1.0f);
 
 	std::vector<float> vertices;
 	for (unsigned int i = 0; i < 4; i++)
 	{
-		vertices.push_back(m_Positions[i].x);
-		vertices.push_back(m_Positions[i].y);
-		vertices.push_back(m_Positions[i].z);
+		vertices.push_back(m_VertexPositions[i].x);
+		vertices.push_back(m_VertexPositions[i].y);
+		vertices.push_back(m_VertexPositions[i].z);
 		vertices.push_back(m_TextureCoords[i].x);
 		vertices.push_back(m_TextureCoords[i].y);
 	}
@@ -48,32 +49,32 @@ Fire::Fire()
 		1, 3, 2
 	};
 
-	glGenBuffers(1, &m_InstanceVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_InstanceVBO);
-	glBufferData(GL_ARRAY_BUFFER, 2 * 100 * sizeof(glm::vec3), &instanceAttributes[0], GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	GLCall(glGenBuffers(1, &m_InstanceVBO));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_InstanceVBO));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, 7 * m_MaxParticles * sizeof(float), &instanceAttributes[0], GL_STATIC_DRAW));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 
-	glGenVertexArrays(1, &m_VAO);
-	glGenBuffers(1, &m_VBO);
-	glGenBuffers(1, &m_EBO);
-	glBindVertexArray(m_VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
+	GLCall(glGenVertexArrays(1, &m_VAO));
+	GLCall(glGenBuffers(1, &m_VBO));
+	GLCall(glGenBuffers(1, &m_EBO));
+	GLCall(glBindVertexArray(m_VAO));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_VBO));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW));
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO));
+	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW));
 
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	glBindBuffer(GL_ARRAY_BUFFER, m_InstanceVBO);
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-	glVertexAttribDivisor(2, 1);
-	glVertexAttribDivisor(3, 1);
+	GLCall(glEnableVertexAttribArray(0));
+	GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0));
+	GLCall(glEnableVertexAttribArray(1));
+	GLCall(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float))));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_InstanceVBO));
+	GLCall(glEnableVertexAttribArray(2));
+	GLCall(glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0));
+	GLCall(glEnableVertexAttribArray(3));
+	GLCall(glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(3 * sizeof(float))));
+	GLCall(glVertexAttribDivisor(2, 1));
+	GLCall(glVertexAttribDivisor(3, 1));
 }
 
 void Fire::Update(float dt)
@@ -81,10 +82,6 @@ void Fire::Update(float dt)
 	std::uniform_int_distribution<int> dis(-99, 99);
 	std::uniform_int_distribution<int> disPositive(0, 99);
 
-	if (m_Particles.size() < s_MaxParticles)
-	{
-		m_Particles.push_back(GenerateFireParticle());
-	}
 
 	unsigned int total = 0;
 	for (const auto& particle : m_Particles)
@@ -92,23 +89,40 @@ void Fire::Update(float dt)
 		if (particle.IsAlive()) total++;
 	}
 
-	if (total < s_MaxParticles)
+	unsigned int numGenerated = 0;
+
+	while (m_Particles.size() < m_MaxParticles && numGenerated++ < m_ParticlesPerFrame)
 	{
-		for (unsigned int i = 0; i < m_Particles.size(); i++)
+		m_Particles.push_back(GenerateFireParticle());
+	}
+
+	for (unsigned int i = 0; i < m_Particles.size(); i++)
+	{
+		if (numGenerated >= m_ParticlesPerFrame)
+			break;
+		if (!m_Particles[i].IsAlive())
 		{
-			if (!m_Particles[i].IsAlive())
-			{
-				m_Particles[i] = GenerateFireParticle();
-			}
+			m_Particles[i] = GenerateFireParticle();
+			numGenerated++;
 		}
 	}
+
 	for (auto& particle : m_Particles)
 	{
 		if (particle.IsAlive())
 		{
-			particle.AddSpeed(s_Accel * dt);
+			particle.AddSpeed(glm::vec3(0.0f, m_Force, 0.0f));
 			particle.Update(dt);
 		}
+	}
+}
+
+void Fire::ImGuiRender()
+{
+	if (ImGui::CollapsingHeader("Fire"))
+	{
+		ImGui::SliderFloat("Force", &m_Force, 0.0f, 0.1f);
+		ImGui::SliderInt("Number of generated particles", &m_ParticlesPerFrame, 0, 10);
 	}
 }
 
@@ -116,45 +130,51 @@ void Fire::Draw() const
 {
 	Camera& camera = Camera::GetInstance();
 
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-	glDepthMask(GL_FALSE);
+	GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE));
+	GLCall(glDepthMask(GL_FALSE));
 
 	m_Texture.Bind();
 
 	Shader::FIRE->Bind();
 	Shader::FIRE->SetInt("u_Texture", 0);
 	glm::mat4 model = glm::mat4(1.0f);
-	model[3][1] = 10.0f;
+	model[3][0] = m_Position.x;
+	model[3][1] = m_Position.y;
+	model[3][2] = m_Position.z;
 
 	Shader::FIRE->SetMat4f("u_Model", model);
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_VBO));
 
 	std::vector<glm::vec3> updatedPositions = GetUpdatedPosition(camera);
 
 	for (unsigned int i = 0; i < 4; i++)
 	{
-		glBufferSubData(GL_ARRAY_BUFFER, 5 * i * sizeof(float), 3 * sizeof(float), glm::value_ptr(updatedPositions[i]));
+		GLCall(glBufferSubData(GL_ARRAY_BUFFER, 5 * i * sizeof(float), 3 * sizeof(float), glm::value_ptr(updatedPositions[i])));
 	}
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_InstanceVBO);
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_InstanceVBO));
 	for (unsigned int i = 0; i < m_Particles.size(); i++)
 	{
-		if (!m_Particles[i].IsAlive()) continue;
+		if (!m_Particles[i].IsAlive()) {
+			glm::vec4 color(0.0f, 0.0f, 0.0f, 0.0f);
+			GLCall(glBufferSubData(GL_ARRAY_BUFFER, (i * 7 + 3) * sizeof(float), 4 * sizeof(float), &color[0]));
+			continue;
+		}
 		glm::vec3 data = m_Particles[i].GetPosition();
-		glm::vec3 color = CalcColor(m_Particles[i].GetLife());
-		glBufferSubData(GL_ARRAY_BUFFER, i * 2 * sizeof(glm::vec3), sizeof(glm::vec3), &data[0]);
-		glBufferSubData(GL_ARRAY_BUFFER, (i * 2 + 1) * sizeof(glm::vec3), sizeof(glm::vec3), &color[0]);
+		glm::vec4 color = glm::vec4(CalcColor(m_Particles[i].GetLife()), 1.0f);
+		GLCall(glBufferSubData(GL_ARRAY_BUFFER, i * 7 * sizeof(float), 3 * sizeof(float), &data[0]));
+		GLCall(glBufferSubData(GL_ARRAY_BUFFER, (i * 7 + 3) * sizeof(float), 4 * sizeof(float), &color[0]));
 	}
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(m_VAO);
-	glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, m_Particles.size());
-	glBindVertexArray(0);
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+	GLCall(glBindVertexArray(m_VAO));
+	GLCall(glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, m_Particles.size()));
+	GLCall(glBindVertexArray(0));
 
 	m_Texture.Unbind();
 
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glDepthMask(GL_TRUE);
+	GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+	GLCall(glDepthMask(GL_TRUE));
 }
 
 Particle Fire::GenerateFireParticle()
@@ -184,7 +204,7 @@ std::vector<glm::vec3> Fire::GetUpdatedPosition(const Camera& camera) const
 
 	for (unsigned int i = 0; i < 4; i++)
 	{
-		positions.push_back(rot * m_Positions[i]);
+		positions.push_back(rot * m_VertexPositions[i]);
 	}
 	return positions;
 }

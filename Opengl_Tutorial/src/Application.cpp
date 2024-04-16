@@ -22,8 +22,6 @@
 const unsigned int WIDTH = 1280;
 const unsigned int HEIGHT = 760;
 
-//Camera camera(0.0f, 10.0f, 0.0f);
-
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 float lastX;
@@ -86,8 +84,8 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 int main()
 {
 	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", NULL, NULL);
@@ -129,6 +127,7 @@ int main()
 	// Setup Platform/Renderer backends
 	ImGui_ImplGlfw_InitForOpenGL(window, true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
 	ImGui_ImplOpenGL3_Init();
+	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 	Camera& camera = Camera::GetInstance();
 
@@ -182,7 +181,7 @@ int main()
 	// Instancing
 	Shader::FIRE->SetVec3f("u_CameraUp", camera.GetUp());
 	Shader::FIRE->SetVec3f("u_CameraFront", camera.GetFront());
-	Fire fire;
+	Fire fire(1.0f, 10.0f, 1.0f);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -197,9 +196,6 @@ int main()
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-		ImGui::Text("Hello, world %d", 123);
-		if (ImGui::Button("Save"))
-			std::cout << "Save button preessed" << std::endl;
 		ImGui::ColorEdit3("Ambient", &ambient[0]);
 		ImGui::ColorEdit3("Diffuse", glm::value_ptr(diffuse));
 		ImGui::ColorEdit3("Specular", &specular[0]);
@@ -211,6 +207,8 @@ int main()
 		ImGui::RadioButton("Terrain texture 2", &terrainTexture, 1);
 		ImGui::SameLine();
 		ImGui::RadioButton("Terrain texture 3", &terrainTexture, 2);
+
+		fire.ImGuiRender();
 
 		processInput(window);
 

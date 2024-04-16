@@ -12,7 +12,8 @@ private:
 	Texture m_Texture;
 	std::vector<Particle> m_Particles;
 	std::mt19937 m_Gen;
-	glm::vec3 m_Positions[4] = {
+	glm::vec3 m_Position;
+	glm::vec3 m_VertexPositions[4] = {
 		glm::vec3(-0.05f,  -0.05f, 0.0f),
 		glm::vec3(-0.05f, 0.05f, 0.0f),
 		glm::vec3(0.05f, -0.05f, 0.0f),
@@ -26,11 +27,13 @@ private:
 	};
 	Particle GenerateFireParticle();
 	std::vector<glm::vec3> GetUpdatedPosition(const Camera& camera) const;
-	static glm::vec3 s_Accel;
-	static unsigned int s_MaxParticles;
+	int m_ParticlesPerFrame = 3;
+	const unsigned int m_MaxParticles = 1000;
+	float m_Force = 0.015f;
 public:
-	Fire();
+	Fire(float x, float y, float z);
 	void Update(float dt);
+	void ImGuiRender();
 	void Draw() const;
 	glm::vec3 CalcColor(float life) const;
 };
