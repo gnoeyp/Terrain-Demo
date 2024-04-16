@@ -78,7 +78,7 @@
     <ClCompile Include="src\Fire.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="src\FireParticle.cpp">
+    <ClCompile Include="src\Particle.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="src\Texture.cpp">
@@ -1034,7 +1034,7 @@
     <ClInclude Include="src\Fire.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="src\FireParticle.h">
+    <ClInclude Include="src\Particle.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="src\Utils.h">

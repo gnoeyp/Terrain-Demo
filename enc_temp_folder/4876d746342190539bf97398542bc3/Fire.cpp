@@ -19,7 +19,7 @@ Fire::Fire()
 
 	std::vector<float> instanceAttributes;
 
-	Particle particle = GenerateFireParticle();
+	FireParticle particle = GenerateFireParticle();
 	m_Particles.push_back(particle);
 
 	// position
@@ -153,11 +153,11 @@ void Fire::Draw(const Camera& camera) const
 	glDepthMask(GL_TRUE);
 }
 
-Particle Fire::GenerateFireParticle()
+FireParticle Fire::GenerateFireParticle()
 {
 	std::uniform_int_distribution<int> dis(-20, 20);
 	std::uniform_int_distribution<int> disPositive(0, 20);
-	return Particle(
+	return FireParticle(
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(
 			dis(m_Gen) / 10000.0f,
@@ -171,7 +171,6 @@ std::vector<glm::vec3> Fire::GetUpdatedPosition(const Camera& camera) const
 {
 	std::vector<glm::vec3> positions;
 
-	// Primitive의 정면이 카메라를 향하도록 회전시킵니다.
 	glm::vec3 z = glm::normalize(-camera.GetFront());
 	glm::vec3 y = glm::normalize(camera.GetUp());
 	glm::vec3 x = glm::normalize(glm::cross(z, y));

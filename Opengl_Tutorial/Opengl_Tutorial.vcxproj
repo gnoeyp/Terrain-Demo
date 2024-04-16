@@ -141,7 +141,7 @@
   <ItemGroup>
     <ClCompile Include="src\CubeMap.cpp" />
     <ClCompile Include="src\Fire.cpp" />
-    <ClCompile Include="src\FireParticle.cpp" />
+    <ClCompile Include="src\Particle.cpp" />
     <ClCompile Include="src\GLUtils.cpp" />
     <ClCompile Include="src\Ground.cpp" />
     <ClCompile Include="src\Model.cpp" />
@@ -166,7 +166,7 @@
   <ItemGroup>
     <ClInclude Include="src\CubeMap.h" />
     <ClInclude Include="src\Fire.h" />
-    <ClInclude Include="src\FireParticle.h" />
+    <ClInclude Include="src\Particle.h" />
     <ClInclude Include="src\GLUtils.h" />
     <ClInclude Include="src\Ground.h" />
     <ClInclude Include="src\Model.h" />
