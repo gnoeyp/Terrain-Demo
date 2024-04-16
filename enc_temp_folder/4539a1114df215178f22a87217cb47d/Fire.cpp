@@ -8,6 +8,7 @@
 #include <random>
 #include <stb_image.h>
 
+glm::vec3 Fire::s_Accel = glm::vec3(0.0f, 0.1f, 0.0f);
 const unsigned int MAX_PARTICLES = 1000;
 
 Fire::Fire()
@@ -19,7 +20,7 @@ Fire::Fire()
 
 	std::vector<float> instanceAttributes;
 
-	FireParticle particle = GenerateFireParticle();
+	Particle particle = GenerateFireParticle();
 	m_Particles.push_back(particle);
 
 	// position
@@ -74,7 +75,7 @@ Fire::Fire()
 	glVertexAttribDivisor(3, 1);
 }
 
-void Fire::Update()
+void Fire::Update(float dt)
 {
 	std::uniform_int_distribution<int> dis(-99, 99);
 	std::uniform_int_distribution<int> disPositive(0, 99);
@@ -104,8 +105,8 @@ void Fire::Update()
 	{
 		if (particle.IsAlive())
 		{
-			particle.AddSpeed(glm::vec3(0.0f, 0.0001f, 0.0f));
-			particle.Update();
+			particle.AddSpeed(s_Accel * dt);
+			particle.Update(dt);
 		}
 	}
 }
@@ -153,16 +154,16 @@ void Fire::Draw(const Camera& camera) const
 	glDepthMask(GL_TRUE);
 }
 
-FireParticle Fire::GenerateFireParticle()
+Particle Fire::GenerateFireParticle()
 {
-	std::uniform_int_distribution<int> dis(-20, 20);
-	std::uniform_int_distribution<int> disPositive(0, 20);
-	return FireParticle(
+	std::uniform_int_distribution<int> dis(-10, 10);
+	std::uniform_int_distribution<int> disPositive(0, 10);
+	return Particle(
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(
-			dis(m_Gen) / 10000.0f,
-			disPositive(m_Gen) / 10000.0f,
-			dis(m_Gen) / 10000.0f
+			dis(m_Gen) / 100.0f,
+			disPositive(m_Gen) / 100.0f,
+			dis(m_Gen) / 100.0f
 		)
 	);
 }
@@ -171,6 +172,7 @@ std::vector<glm::vec3> Fire::GetUpdatedPosition(const Camera& camera) const
 {
 	std::vector<glm::vec3> positions;
 
+	// Primitive의 정면이 카메라를 향하도록 회전시킵니다.
 	glm::vec3 z = glm::normalize(-camera.GetFront());
 	glm::vec3 y = glm::normalize(camera.GetUp());
 	glm::vec3 x = glm::normalize(glm::cross(z, y));

@@ -27,9 +27,11 @@ private:
 	};
 	Particle GenerateFireParticle();
 	std::vector<glm::vec3> GetUpdatedPosition(const Camera& camera) const;
+	static glm::vec3 s_Accel;
+	static unsigned int s_MaxParticles;
 public:
 	Fire();
-	void Update();
+	void Update(float dt);
 	void Draw(const Camera& camera) const;
 	glm::vec3 CalcColor(float life) const;
 };

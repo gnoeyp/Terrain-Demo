@@ -1037,9 +1037,6 @@
     <ClInclude Include="src\Particle.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="src\Utils.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="src\Texture.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>

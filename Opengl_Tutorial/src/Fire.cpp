@@ -8,7 +8,8 @@
 #include <random>
 #include <stb_image.h>
 
-const unsigned int MAX_PARTICLES = 1000;
+glm::vec3 Fire::s_Accel = glm::vec3(0.0f, 0.2f, 0.0f);
+unsigned int Fire::s_MaxParticles = 1000;
 
 Fire::Fire()
 	: m_Particles(), m_InstanceVBO(0), m_VBO(0), m_VAO(0), m_EBO(0),
@@ -74,12 +75,12 @@ Fire::Fire()
 	glVertexAttribDivisor(3, 1);
 }
 
-void Fire::Update()
+void Fire::Update(float dt)
 {
 	std::uniform_int_distribution<int> dis(-99, 99);
 	std::uniform_int_distribution<int> disPositive(0, 99);
 
-	if (m_Particles.size() < MAX_PARTICLES)
+	if (m_Particles.size() < s_MaxParticles)
 	{
 		m_Particles.push_back(GenerateFireParticle());
 	}
@@ -90,7 +91,7 @@ void Fire::Update()
 		if (particle.IsAlive()) total++;
 	}
 
-	if (total < MAX_PARTICLES)
+	if (total < s_MaxParticles)
 	{
 		for (unsigned int i = 0; i < m_Particles.size(); i++)
 		{
@@ -104,8 +105,8 @@ void Fire::Update()
 	{
 		if (particle.IsAlive())
 		{
-			particle.AddSpeed(glm::vec3(0.0f, 0.0001f, 0.0f));
-			particle.Update();
+			particle.AddSpeed(s_Accel * dt);
+			particle.Update(dt);
 		}
 	}
 }
@@ -155,14 +156,14 @@ void Fire::Draw(const Camera& camera) const
 
 Particle Fire::GenerateFireParticle()
 {
-	std::uniform_int_distribution<int> dis(-20, 20);
-	std::uniform_int_distribution<int> disPositive(0, 20);
+	std::uniform_int_distribution<int> dis(-10, 10);
+	std::uniform_int_distribution<int> disPositive(0, 10);
 	return Particle(
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(
-			dis(m_Gen) / 10000.0f,
-			disPositive(m_Gen) / 10000.0f,
-			dis(m_Gen) / 10000.0f
+			dis(m_Gen) / 100.0f,
+			disPositive(m_Gen) / 100.0f,
+			dis(m_Gen) / 100.0f
 		)
 	);
 }
