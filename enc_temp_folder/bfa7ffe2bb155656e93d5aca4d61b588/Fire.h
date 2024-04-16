@@ -25,10 +25,10 @@ private:
 		glm::vec2(1.0f, 0.0f),
 		glm::vec2(1.0f, 1.0f),
 	};
-	FireParticle GenerateFireParticle();
 public:
 	Fire();
 	void Update();
 	void Draw(const Camera& camera) const;
+	FireParticle GenerateFireParticle();
 	glm::vec3 CalcColor(float life) const;
 };

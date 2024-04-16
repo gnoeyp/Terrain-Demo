@@ -6,7 +6,7 @@ FireParticle::FireParticle(glm::vec3 position, glm::vec3 speed) : m_Life(0), m_S
 
 void FireParticle::Update()
 {
-	if (IsDead()) return;
+	if (!IsAlive()) return;
 	m_Position += m_Speed;
 	// TODO: life 변경방법 수정
 	if (m_Life < m_MaxLife)

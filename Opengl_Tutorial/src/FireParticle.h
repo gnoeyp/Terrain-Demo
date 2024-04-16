@@ -14,6 +14,6 @@ public:
 	void AddSpeed(glm::vec3 accel);
 	void Reset(const glm::vec3& position, const glm::vec3& speed);
 	inline glm::vec3 GetPosition() const { return m_Position; }
-	inline bool IsDead() const { return m_Life >= m_MaxLife; }
+	inline bool IsAlive() const { return m_Life < m_MaxLife; }
 	inline float GetLife() const { return m_Life / m_MaxLife; }
 };

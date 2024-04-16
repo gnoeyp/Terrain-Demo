@@ -2,54 +2,44 @@
 #include "Shader.h"
 #include "Texture.h"
 #include <GL/glew.h>
+#include <glm/gtc/type_ptr.hpp>
 #include <glm/matrix.hpp>
 #include <iostream>
 #include <random>
 #include <stb_image.h>
 
 const unsigned int MAX_PARTICLES = 1000;
-int index = 0;
-float offset = 0.1f;
-
-std::random_device rd;
 
 Fire::Fire()
-	: m_Particles(), m_InstanceVBO(0), m_VBO(0), m_VAO(0), m_EBO(0), m_Gen(rd()),
+	: m_Particles(), m_InstanceVBO(0), m_VBO(0), m_VAO(0), m_EBO(0),
 	m_Texture("res/textures/circle.png", { GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR })
 {
+	std::random_device rd;
+	m_Gen = std::mt19937(rd());
+
 	std::vector<float> instanceAttributes;
 
-	std::uniform_int_distribution<int> dis(-99, 99);
-	std::uniform_int_distribution<int> disPositive(0, 99);
-	while (m_Particles.size() < m_NumGen)
+	FireParticle particle = GenerateFireParticle();
+	m_Particles.push_back(particle);
+
+	// position
+	instanceAttributes.push_back(particle.GetPosition().x);
+	instanceAttributes.push_back(particle.GetPosition().y);
+	instanceAttributes.push_back(particle.GetPosition().z);
+	// color
+	instanceAttributes.push_back(1.0f);
+	instanceAttributes.push_back(0.0f);
+	instanceAttributes.push_back(0.0f);
+
+	std::vector<float> vertices;
+	for (unsigned int i = 0; i < 4; i++)
 	{
-		FireParticle particle(
-			glm::vec3(0.0f, 0.0f, 0.0f),
-			glm::vec3(
-				dis(m_Gen) / 10000.0f,
-				disPositive(m_Gen) / 10000.0f,
-				dis(m_Gen) / 10000.0f
-			)
-		);
-		m_Particles.push_back(particle);
-
-		// position
-		instanceAttributes.push_back(particle.GetPosition().x);
-		instanceAttributes.push_back(particle.GetPosition().y);
-		instanceAttributes.push_back(particle.GetPosition().z);
-		// color
-		instanceAttributes.push_back(1.0f);
-		instanceAttributes.push_back(0.0f);
-		instanceAttributes.push_back(0.0f);
+		vertices.push_back(m_Positions[i].x);
+		vertices.push_back(m_Positions[i].y);
+		vertices.push_back(m_Positions[i].z);
+		vertices.push_back(m_TextureCoords[i].x);
+		vertices.push_back(m_TextureCoords[i].y);
 	}
-
-	float quadVertices[] = {
-		// position            // texture
-		-0.05f,  -0.05f, 0.0f,	0.0f, 0.0f,
-		-0.05f,  0.05f, 0.0f,	0.0, 1.0f,
-		0.05f,  -0.05f, 0.0f,	1.0f, 0.0f,
-		0.05f,  0.05f, 0.0f,	1.0f, 1.0f
-	};
 
 	unsigned int indices[] = {
 		0, 1, 2,
@@ -66,7 +56,7 @@ Fire::Fire()
 	glGenBuffers(1, &m_EBO);
 	glBindVertexArray(m_VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
@@ -97,16 +87,14 @@ void Fire::Update()
 	unsigned int total = 0;
 	for (const auto& particle : m_Particles)
 	{
-		if (!particle.IsDead()) total++;
+		if (particle.IsAlive()) total++;
 	}
-
-	std::cout << total << std::endl;
 
 	if (total < MAX_PARTICLES)
 	{
 		for (unsigned int i = 0; i < m_Particles.size(); i++)
 		{
-			if (m_Particles[i].IsDead())
+			if (!m_Particles[i].IsAlive())
 			{
 				m_Particles[i] = GenerateFireParticle();
 			}
@@ -114,7 +102,7 @@ void Fire::Update()
 	}
 	for (auto& particle : m_Particles)
 	{
-		if (!particle.IsDead())
+		if (particle.IsAlive())
 		{
 			particle.AddSpeed(glm::vec3(0.0f, 0.0001f, 0.0f));
 			particle.Update();
@@ -137,12 +125,7 @@ void Fire::Draw(const Camera& camera) const
 	Shader::FIRE->SetMat4f("u_Model", model);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-	std::vector<float> vertices = {
-		-0.05f,  -0.05f, 0.0f, 0.0f, 0.0f,
-		-0.05f,  0.05f, 0.0f, 0.0f, 1.0f,
-		0.05f,  -0.05f, 0.0f, 1.0f, 0.0f,
-		0.05f,  0.05f, 0.0f, 1.0f, 1.0f
-	};
+
 	glm::vec3 z = glm::normalize(-camera.GetFront());
 	glm::vec3 y = glm::normalize(camera.GetUp());
 	glm::vec3 x = glm::normalize(glm::cross(z, y));
@@ -151,19 +134,14 @@ void Fire::Draw(const Camera& camera) const
 
 	for (unsigned int i = 0; i < 4; i++)
 	{
-		glm::vec3 v(vertices[i * 5], vertices[i * 5 + 1], vertices[i * 5 + 2]);
-		v = rot * v;
-		vertices[i * 5] = v.x;
-		vertices[i * 5 + 1] = v.y;
-		vertices[i * 5 + 2] = v.z;
+		glm::vec3 position = rot * m_Positions[i];
+		glBufferSubData(GL_ARRAY_BUFFER, sizeof(float) * 5, sizeof(float) * 3, glm::value_ptr(position));
 	}
-
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_InstanceVBO);
 	for (unsigned int i = 0; i < m_Particles.size(); i++)
 	{
-		if (m_Particles[i].IsDead()) continue;
+		if (!m_Particles[i].IsAlive()) continue;
 		glm::vec3 data = m_Particles[i].GetPosition();
 		glm::vec3 color = CalcColor(m_Particles[i].GetLife());
 		glBufferSubData(GL_ARRAY_BUFFER, i * 2 * sizeof(glm::vec3), sizeof(glm::vec3), &data[0]);
