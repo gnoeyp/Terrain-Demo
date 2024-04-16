@@ -1,3 +1,4 @@
+#include "Camera.h"
 #include "Fire.h"
 #include "Shader.h"
 #include "Texture.h"
@@ -111,8 +112,10 @@ void Fire::Update(float dt)
 	}
 }
 
-void Fire::Draw(const Camera& camera) const
+void Fire::Draw() const
 {
+	Camera& camera = Camera::GetInstance();
+
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	glDepthMask(GL_FALSE);
 

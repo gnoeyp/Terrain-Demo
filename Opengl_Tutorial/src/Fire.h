@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Camera.h"
 #include "Particle.h"
 #include "Texture.h"
 #include <random>
@@ -32,6 +31,6 @@ private:
 public:
 	Fire();
 	void Update(float dt);
-	void Draw(const Camera& camera) const;
+	void Draw() const;
 	glm::vec3 CalcColor(float life) const;
 };

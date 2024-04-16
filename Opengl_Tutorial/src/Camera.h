@@ -4,6 +4,8 @@
 class Camera
 {
 private:
+	Camera(float x = 0.0, float y = 0.0, float z = 0.0);
+
 	glm::vec3 m_Position;
 	glm::vec3 m_Front;
 	glm::vec3 m_Up;
@@ -13,8 +15,13 @@ private:
 	float m_Pitch = 0.0f;
 	float m_Zoom = 45.0f;
 public:
-	Camera(float x = 0.0, float y = 0.0, float z = 0.0);
 	~Camera();
+	static Camera& GetInstance()
+	{
+		static Camera camera(0.0f, 10.0f, 0.0f);
+		return camera;
+	}
+
 	glm::mat4 GetViewMatrix() const;
 	void MoveLeft(float dt);
 	void MoveRight(float dt);

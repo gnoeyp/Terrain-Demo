@@ -22,7 +22,7 @@
 const unsigned int WIDTH = 1280;
 const unsigned int HEIGHT = 760;
 
-Camera camera(0.0f, 10.0f, 0.0f);
+//Camera camera(0.0f, 10.0f, 0.0f);
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
@@ -33,6 +33,7 @@ bool isDragging = false;
 
 void processInput(GLFWwindow* window)
 {
+	Camera& camera = Camera::GetInstance();
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
@@ -52,6 +53,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
+	Camera& camera = Camera::GetInstance();
+
 	if (!isDragging) return;
 	if (isFirstMouse)
 	{
@@ -126,6 +129,8 @@ int main()
 	// Setup Platform/Renderer backends
 	ImGui_ImplGlfw_InitForOpenGL(window, true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
 	ImGui_ImplOpenGL3_Init();
+
+	Camera& camera = Camera::GetInstance();
 
 	Shader skyboxShader("res/shaders/skybox.vert", "res/shaders/skybox.frag");
 	//Shader groundShader("res/shaders/basic.vert", "res/shaders/basic.frag");
@@ -253,7 +258,7 @@ int main()
 		skyboxShader.SetMat4f("u_View", glm::mat4(glm::mat3(camera.GetViewMatrix())));
 		cubeMap.Draw(skyboxShader);
 
-		fire.Draw(camera);
+		fire.Draw();
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
