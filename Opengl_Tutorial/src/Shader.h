@@ -16,6 +16,7 @@ public:
 	static Shader* BASIC;
 	static Shader* BASIC_TEXTURE;
 	static Shader* HEIGHTMAP;
+	static Shader* FIRE;
 
 	unsigned int CompileShader(unsigned int type, const std::string& source) const;
 	std::string ParseShader(const char* path) const;
@@ -37,12 +38,14 @@ public:
 		Shader::BASIC = new Shader("res/shaders/basic.vert", "res/shaders/basic.frag");
 		Shader::BASIC_TEXTURE = new Shader("res/shaders/basic_texture.vert", "res/shaders/basic_texture.frag");
 		Shader::HEIGHTMAP = new Shader("res/shaders/heightmap.vert", "res/shaders/heightmap.frag");
+		Shader::FIRE = new Shader("res/shaders/fire.vert", "res/shaders/fire.frag");
 	}
 	static void Clear()
 	{
 		delete Shader::BASIC;
 		delete Shader::BASIC_TEXTURE;
 		delete Shader::HEIGHTMAP;
+		delete Shader::FIRE;
 	}
 };
 

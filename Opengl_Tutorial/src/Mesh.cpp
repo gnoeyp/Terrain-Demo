@@ -1,7 +1,7 @@
 #include "Mesh.h"
 #include <GL/glew.h>
 
-Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<Texture>& textures)
+Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<MeshTexture>& textures)
 	: m_Vertices(vertices), m_Indices(indices), m_Textures(textures)
 {
 	glGenVertexArrays(1, &m_VAO);

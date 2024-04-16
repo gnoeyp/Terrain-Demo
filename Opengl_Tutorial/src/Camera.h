@@ -24,5 +24,7 @@ public:
 	void UpdateCameraVectors();
 	const glm::vec3& GetPosition() const { return m_Position; }
 	inline float GetZoom() const { return m_Zoom; }
+	inline glm::vec3 GetFront() const { return m_Front; }
+	inline glm::vec3 GetUp() const { return m_Up; }
 };
 

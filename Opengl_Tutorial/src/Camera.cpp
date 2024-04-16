@@ -5,6 +5,7 @@
 Camera::Camera(float x, float y, float z)
 	: m_Position(x, y, z), m_Front(0, 0, -1.0f), m_WorldUp(0, 1.0, 0), m_Up()
 {
+	UpdateCameraVectors();
 }
 
 Camera::~Camera()

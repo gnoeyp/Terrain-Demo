@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "CubeMap.h"
+#include "Fire.h"
 #include "GLUtils.h"
 #include "Ground.h"
 #include "Model.h"
@@ -15,9 +16,8 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <iostream>
+#include <random>
 #include <stb_image.h>
-
-
 
 const unsigned int WIDTH = 1280;
 const unsigned int HEIGHT = 760;
@@ -82,6 +82,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 
 int main()
 {
+
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -100,7 +101,6 @@ int main()
 
 	if (glewInit() != GLEW_OK)
 	{
-		std::cout << "Failed to initialize GLEW" << std::endl;
 		return -1;
 	}
 
@@ -129,7 +129,7 @@ int main()
 	ImGui_ImplOpenGL3_Init();
 
 	Shader skyboxShader("res/shaders/skybox.vert", "res/shaders/skybox.frag");
-	Shader groundShader("res/shaders/basic.vert", "res/shaders/basic.frag");
+	//Shader groundShader("res/shaders/basic.vert", "res/shaders/basic.frag");
 
 	std::vector<std::string> faces = {
 		"res/textures/skybox_miramar/miramar_ft.tga",
@@ -148,13 +148,13 @@ int main()
 	glm::vec3 diffuse(0.5f, 0.5f, 0.5f);
 	glm::vec3 specular(1.0f, 1.0f, 1.0f);
 
-	Ground ground;
+	//Ground ground;
 	Terrain terrain(
 		"res/textures/iceland_heightmap.png",
 		"res/textures/mud_cracked_dry/mud_cracked_dry_03_diff_1k.jpg",
 		"res/textures/mud_cracked_dry/AnyConv.com__mud_cracked_dry_03_nor_gl_1k.png"
 	);
-	Model ourModel("res/textures/backpack/backpack.obj");
+	//Model ourModel("res/textures/backpack/backpack.obj");
 
 	int terrainTexture = 0;
 
@@ -169,13 +169,23 @@ int main()
 	matrixUbo.BindShader(Shader::HEIGHTMAP);
 	matrixUbo.BindShader(Shader::BASIC);
 	matrixUbo.BindShader(Shader::BASIC_TEXTURE);
-	matrixUbo.BindShader(groundShader);
+	//matrixUbo.BindShader(groundShader);
 
 	dirLightUbo.BindShader(Shader::BASIC_TEXTURE);
 	dirLightUbo.BindShader(Shader::HEIGHTMAP);
 
+
+	// Instancing
+	Shader::FIRE->SetVec3f("u_CameraUp", camera.GetUp());
+	Shader::FIRE->SetVec3f("u_CameraFront", camera.GetFront());
+	Fire fire;
+
 	while (!glfwWindowShouldClose(window))
 	{
+
+		// Update
+		fire.Update();
+
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
@@ -222,12 +232,12 @@ int main()
 
 		Shader::BASIC_TEXTURE->SetVec3f("u_ViewPos", camera.GetPosition());
 
-		ourModel.Draw(*Shader::BASIC_TEXTURE);
+		//ourModel.Draw(*Shader::BASIC_TEXTURE);
 
 		Shader::BASIC->Bind();
 		Shader::BASIC->SetMat4f("u_Model", model);
 
-		ground.Draw(*Shader::BASIC);
+		//ground.Draw(*Shader::BASIC);
 
 		Shader::HEIGHTMAP->Bind();
 		Shader::HEIGHTMAP->SetMat4f("u_Model", model);
@@ -244,6 +254,7 @@ int main()
 		skyboxShader.SetMat4f("u_View", glm::mat4(glm::mat3(camera.GetViewMatrix())));
 		cubeMap.Draw(skyboxShader);
 
+		fire.Draw(camera);
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
