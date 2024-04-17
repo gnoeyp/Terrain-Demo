@@ -104,7 +104,7 @@ vec4 textureVoronoi( sampler2D samp, vec2 uv )
 
 vec4 textureOffset( sampler2D samp, vec2 x )
 {
-	float  k = hash4(0.005*x).x;
+	float k = hash4(0.0005*x).x;
     //float k = texture( iChannel1, 0.005*x ).x; // cheap (cache friendly) lookup
     
     vec2 duvdx = dFdx( x );
