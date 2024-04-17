@@ -16,6 +16,8 @@ in vec2 TextureCoord[];
 
 out float Height;
 out vec2 TexCoord;
+out vec3 FragPos;
+out vec2 HeightCoord;
 
 void main()
 {
@@ -32,6 +34,7 @@ void main()
     vec2 hCoord = (h1 - h0) * v + h0;
 
     Height = texture(u_HeightMap, hCoord).y * 64.0 - 16.0;
+    HeightCoord = hCoord;
 
     vec2 t00 = TextureCoord[0];
     vec2 t01 = TextureCoord[1];
@@ -56,4 +59,5 @@ void main()
     vec4 p = (p1 - p0) * v + p0 + normal * Height;
 
     gl_Position = projection * view * u_Model * p;
+    FragPos = vec3(u_Model * p);
 }

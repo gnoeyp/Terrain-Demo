@@ -115,6 +115,11 @@ void Shader::BindUniformBlock(const char* name)
 	glUniformBlockBinding(m_ID, index, m_UniformBindingIndex++);
 }
 
+void Shader::SetFloat(const char* name, float v) const
+{
+	GLCall(glUniform1f(GetLocation(name), v));
+}
+
 Shader::Shader(const char* vertPath, const char* fragPath, const char* tcsPath, const char* tesPath)
 {
 	m_ID = CreateShader(vertPath, fragPath, tcsPath, tesPath);

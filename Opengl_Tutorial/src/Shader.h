@@ -30,6 +30,7 @@ public:
 	void SetVec4f(const char* name, glm::vec4 v) const;
 	void SetVec4f(const char* name, float v0, float v1, float v2, float v3) const;
 	void SetInt(const char* name, int v) const;
+	void SetFloat(const char* name, float v) const;
 	int GetLocation(const char* name) const;
 	inline unsigned int GetID() const { return m_ID; }
 	void BindUniformBlock(const char* name);

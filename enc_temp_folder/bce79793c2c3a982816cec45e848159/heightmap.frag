@@ -10,6 +10,9 @@ uniform float u_TexelSizeV;
 uniform vec3 u_LightPos;
 uniform vec3 u_ViewPos;
 uniform vec3 u_FogColor;
+//in vec3 TangentLightPos;
+//in vec3 TangentViewPos;
+//in vec3 TangentFragPos;
 
 layout (std140) uniform u_DirLight
 {
@@ -155,33 +158,43 @@ void main()
 {
 //    float h = (Height + 16)/64.0f;
 	vec4 texColor;
-    vec3 normalMap;
+    vec3 norm;
 
     switch(u_TextureMethodType)
     {
     case 0:
 		texColor = textureRotation(u_Texture, TexCoord);
-        normalMap = textureRotation(u_NormalTexture, TexCoord).rgb;
+        norm = textureRotation(u_NormalTexture, TexCoord).rgb;
 		break;
     case 1:
 		texColor = textureVoronoi(u_Texture, TexCoord);
-        normalMap = textureVoronoi(u_NormalTexture, TexCoord).rgb;
+        norm = textureVoronoi(u_NormalTexture, TexCoord).rgb;
 		break;
     case 2:
 		texColor = textureOffset(u_Texture, TexCoord);
-        normalMap = textureOffset(u_NormalTexture, TexCoord).rgb;
+        norm = textureOffset(u_NormalTexture, TexCoord).rgb;
     }
 
 	float ambientStrength = 0.1f;
 	vec3 ambientColor = ambientStrength * ambient;
 
     mat3 TBN = CalcTBN();
-	normalMap = normalMap * 2.0 - 1.0;
-    vec3 normal = normalize(TBN * normalMap);
+//    vec3 normal = TBN[2];
+
+//	vec3 normalTexture = texture(u_NormalTexture, TexCoord).rgb;
+	norm = norm * 2.0 - 1.0;
+    vec3 normal = normalize(TBN * norm);
 
     vec3 lightDir = normalize(u_LightPos - FragPos);
 	float diff = max(dot(normal, lightDir), 0.0);
 	vec3 diffuseColor = diffuse * diff * vec3(texColor);
+
+//    // diffuse
+//    norm = normalize(norm * 2.0 - 1.0);
+//    vec3 lightDir = normalize(TangentLightPos - TangentFragPos);
+//	float diff = max(dot(norm, lightDir), 0.0);
+//    vec3 diffuseColor = diffuse * diff;
+
 
 	float fogStart = 10.0f;
 	float fogEnd = 500.0f;
