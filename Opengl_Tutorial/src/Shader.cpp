@@ -1,3 +1,4 @@
+#include "GLUtils.h"
 #include "Shader.h"
 #include <fstream>
 #include <GL/glew.h>
@@ -34,13 +35,13 @@ unsigned int Shader::CreateShader(const char* vertPath, const char* fragPath, co
 	if (tcsPath != nullptr)
 	{
 		std::string source = ParseShader(tcsPath);
-		tsc = CompileShader(GL_TESS_CONTROL_SHADER, tcsPath);
+		tsc = CompileShader(GL_TESS_CONTROL_SHADER, source);
 	}
 
 	if (tesPath != nullptr)
 	{
 		std::string source = ParseShader(tesPath);
-		tes = CompileShader(GL_TESS_EVALUATION_SHADER, tesPath);
+		tes = CompileShader(GL_TESS_EVALUATION_SHADER, source);
 	}
 
 	unsigned int program = glCreateProgram();
@@ -127,6 +128,23 @@ Shader::~Shader()
 	}
 }
 
+std::string ShaderType(unsigned int type)
+{
+	switch (type)
+	{
+	case GL_VERTEX_SHADER:
+		return "vertex";
+	case GL_FRAGMENT_SHADER:
+		return "fragment";
+	case GL_TESS_CONTROL_SHADER:
+		return "tesselation control";
+	case GL_TESS_EVALUATION_SHADER:
+		return "tesselation evaluation";
+	default:
+		ASSERT(false);
+	}
+}
+
 unsigned int Shader::CompileShader(unsigned int type, const std::string& source) const
 {
 	unsigned int id = glCreateShader(type);
@@ -140,7 +158,7 @@ unsigned int Shader::CompileShader(unsigned int type, const std::string& source)
 	{
 		char message[1024];
 		glGetShaderInfoLog(id, 1024, nullptr, message);
-		std::cout << "Failed to compile shader" << std::endl;
+		std::cout << "Failed to compile " << ShaderType(type) << " shader" << std::endl;
 		std::cout << message << std::endl;
 	}
 

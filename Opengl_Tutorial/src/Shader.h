@@ -38,7 +38,7 @@ public:
 	{
 		Shader::BASIC = new Shader("res/shaders/basic.vert", "res/shaders/basic.frag");
 		Shader::BASIC_TEXTURE = new Shader("res/shaders/basic_texture.vert", "res/shaders/basic_texture.frag");
-		Shader::HEIGHTMAP = new Shader("res/shaders/heightmap.vert", "res/shaders/heightmap.frag");
+		Shader::HEIGHTMAP = new Shader("res/shaders/heightmap.vert", "res/shaders/heightmap.frag", "res/shaders/heightmap.tesc", "res/shaders/heightmap.tese");
 		Shader::FIRE = new Shader("res/shaders/fire.vert", "res/shaders/fire.frag");
 	}
 	static void Clear()

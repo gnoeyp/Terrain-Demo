@@ -9,13 +9,13 @@ Texture::Texture(const char* path, const TextureParameters& textureParams)
 	glGenTextures(1, &m_ID);
 	glBindTexture(GL_TEXTURE_2D, m_ID);
 
-	int width, height, nChannels;
+	int nChannels;
 
-	unsigned char* data = stbi_load(path, &width, &height, &nChannels, 0);
+	unsigned char* data = stbi_load(path, &m_Width, &m_Height, &nChannels, 0);
 	if (data)
 	{
 		unsigned int format = GetFormat(nChannels);
-		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 		stbi_image_free(data);
 	}
@@ -38,9 +38,9 @@ Texture::~Texture()
 	glDeleteTextures(1, &m_ID);
 }
 
-void Texture::Bind() const
+void Texture::Bind(unsigned int slot) const
 {
-	glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(GL_TEXTURE0 + slot);
 	glBindTexture(GL_TEXTURE_2D, m_ID);
 }
 

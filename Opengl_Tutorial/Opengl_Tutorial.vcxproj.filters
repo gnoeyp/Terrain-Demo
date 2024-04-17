@@ -2293,8 +2293,8 @@
     <None Include="res\shaders\heightmap.frag" />
     <None Include="res\shaders\fire.vert" />
     <None Include="res\shaders\fire.frag" />
-    <None Include="res\shaders\heightmap.tcs" />
-    <None Include="res\shaders\heightmap.tes" />
+    <None Include="res\shaders\heightmap.tesc" />
+    <None Include="res\shaders\heightmap.tese" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="vendor\imgui\misc\debuggers\imgui.natvis" />
