@@ -18,7 +18,7 @@ public:
 	~Camera();
 	static Camera& GetInstance()
 	{
-		static Camera camera(0.0f, 10.0f, 0.0f);
+		static Camera camera(0.0f, 12.0f, 8.0f);
 		return camera;
 	}
 

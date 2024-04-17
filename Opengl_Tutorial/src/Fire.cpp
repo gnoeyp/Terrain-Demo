@@ -162,7 +162,7 @@ void Fire::Draw() const
 			continue;
 		}
 		glm::vec3 data = m_Particles[i].GetPosition();
-		glm::vec4 color = glm::vec4(CalcColor(m_Particles[i].GetLife()), 1.0f);
+		glm::vec4 color = CalcColor(m_Particles[i].GetLife());
 		GLCall(glBufferSubData(GL_ARRAY_BUFFER, i * 7 * sizeof(float), 3 * sizeof(float), &data[0]));
 		GLCall(glBufferSubData(GL_ARRAY_BUFFER, (i * 7 + 3) * sizeof(float), 4 * sizeof(float), &color[0]));
 	}
@@ -196,11 +196,13 @@ std::vector<glm::vec3> Fire::GetUpdatedPosition(const Camera& camera) const
 	std::vector<glm::vec3> positions;
 
 	// Primitive의 정면이 카메라를 향하도록 회전시킵니다.
-	glm::vec3 z = glm::normalize(-camera.GetFront());
+	// TODO: uniform으로 rot을 넘겨주도록 수정
+	glm::vec3 z = glm::normalize(camera.GetPosition() - m_Position);
 	glm::vec3 y = glm::normalize(camera.GetUp());
-	glm::vec3 x = glm::normalize(glm::cross(z, y));
+	glm::vec3 x = glm::normalize(glm::cross(y, z));
+	y = glm::normalize(glm::cross(z, x));
 
-	glm::mat3 rot = glm::transpose(glm::mat3(x, y, z));
+	glm::mat3 rot = glm::mat3(x, y, z);
 
 	for (unsigned int i = 0; i < 4; i++)
 	{
@@ -209,11 +211,11 @@ std::vector<glm::vec3> Fire::GetUpdatedPosition(const Camera& camera) const
 	return positions;
 }
 
-glm::vec3 Fire::CalcColor(float life) const
+glm::vec4 Fire::CalcColor(float life) const
 {
-	glm::vec3 white(1.0f, 1.0f, 1.0f);
-	glm::vec3 yellow(1.0f, 1.0f, 0.0f);
-	glm::vec3 red(1.0f, 0.0f, 0.0f);
+	glm::vec4 white(1.0f, 1.0f, 1.0f, 0.2f);
+	glm::vec4 yellow(1.0f, 1.0f, 0.0f, 0.2f);
+	glm::vec4 red(1.0f, 0.0f, 0.0f, 0.1f);
 
 	if (life < 0.2)
 	{

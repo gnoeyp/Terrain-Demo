@@ -35,5 +35,5 @@ public:
 	void Update(float dt);
 	void ImGuiRender();
 	void Draw() const;
-	glm::vec3 CalcColor(float life) const;
+	glm::vec4 CalcColor(float life) const;
 };

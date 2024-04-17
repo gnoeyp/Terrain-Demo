@@ -159,6 +159,8 @@ int main()
 		"res/textures/mud_cracked_dry/mud_cracked_dry_03_diff_1k.jpg",
 		"res/textures/mud_cracked_dry/AnyConv.com__mud_cracked_dry_03_nor_gl_1k.png"
 	);
+	Model house("res/textures/middle-earth-house/AllHouse.obj");
+	Model wood("res/textures/low_obj_1500/low_obj_1500.obj");
 	//Model ourModel("res/textures/backpack/backpack.obj");
 
 	int terrainTexture = 0;
@@ -183,7 +185,7 @@ int main()
 	// Instancing
 	Shader::FIRE->SetVec3f("u_CameraUp", camera.GetUp());
 	Shader::FIRE->SetVec3f("u_CameraFront", camera.GetFront());
-	Fire fire(1.0f, 10.0f, 1.0f);
+	Fire fire(3.0f, 9.75f, 5.2f);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -230,13 +232,34 @@ int main()
 		dirLightUbo.SetData(3, &specular[0]);
 
 		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(0.0f, 10.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
 		Shader::BASIC_TEXTURE->SetMat4f("u_Model", model);
 
 		Shader::BASIC_TEXTURE->SetVec3f("u_ViewPos", camera.GetPosition());
 
+		house.Draw(*Shader::BASIC_TEXTURE);
+
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(3.0f, 9.7f, 5.0f));
+		model = glm::scale(model, glm::vec3(0.02f, 0.02f, 0.02f));
+		Shader::BASIC_TEXTURE->SetMat4f("u_Model", model);
+		wood.Draw(*Shader::BASIC_TEXTURE);
+
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(2.7f, 9.7f, 5.3f));
+		model = glm::scale(model, glm::vec3(0.02f, 0.02f, 0.02f));
+		model = glm::rotate(model, glm::radians(90.f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(-15.f), glm::vec3(1.0f, 0.0f, 0.0f));
+		Shader::BASIC_TEXTURE->SetMat4f("u_Model", model);
+		wood.Draw(*Shader::BASIC_TEXTURE);
+
+
 		//ourModel.Draw(*Shader::BASIC_TEXTURE);
+
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
 
 		Shader::BASIC->Bind();
 		Shader::BASIC->SetMat4f("u_Model", model);
