@@ -21,7 +21,6 @@ layout (std140) uniform u_DirLight
 };
 
 out vec4 FragColor;
-in float Height;
 in vec2 TexCoord;
 in vec2 HeightCoord;
 in vec3 FragPos;
@@ -58,7 +57,7 @@ vec4 textureRotation(sampler2D samp, vec2 uv)
     vec2 uvb = uv*ofb.zw + ofb.xy; vec2 ddxb = ddx*ofb.zw; vec2 ddyb = ddy*ofb.zw;
     vec2 uvc = uv*ofc.zw + ofc.xy; vec2 ddxc = ddx*ofc.zw; vec2 ddyc = ddy*ofc.zw;
     vec2 uvd = uv*ofd.zw + ofd.xy; vec2 ddxd = ddx*ofd.zw; vec2 ddyd = ddy*ofd.zw;
-        
+
     // fetch and blend
     vec2 b = smoothstep(0.25,0.75,fuv);
     
@@ -96,11 +95,11 @@ vec4 textureVoronoi( sampler2D samp, vec2 uv )
     }
     
     // normal averaging --> lowers contrasts
-    //return va/w1;
+    return vec4(va/w1, 1.0);
 
     // contrast preserving average
     float mean = 0.3;// textureGrad( samp, uv, ddx*16.0, ddy*16.0 ).x;
-    return vec4(mean + (va-w1*mean)/sqrt(w2), 1.0);
+    return vec4((mean + (va-w1*mean)/sqrt(w2)), 1.0);
 }
 
 vec4 textureOffset( sampler2D samp, vec2 x )
@@ -153,7 +152,6 @@ mat3 CalcTBN()
 
 void main()
 {
-//    float h = (Height + 16)/64.0f;
 	vec4 texColor;
     vec3 normalMap;
 

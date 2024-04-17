@@ -14,7 +14,6 @@ uniform mat4 u_Model = mat4(1.0);
 in vec2 HeightmapCoord[];
 in vec2 TextureCoord[];
 
-out float Height;
 out vec2 TexCoord;
 out vec3 FragPos;
 out vec2 HeightCoord;
@@ -33,7 +32,7 @@ void main()
     vec2 h1 = (h11 - h10) * u + h10;
     vec2 hCoord = (h1 - h0) * v + h0;
 
-    Height = texture(u_HeightMap, hCoord).y * 64.0 - 16.0;
+    float height = texture(u_HeightMap, hCoord).y * 64.0 - 16.0;
     HeightCoord = hCoord;
 
     vec2 t00 = TextureCoord[0];
@@ -56,7 +55,7 @@ void main()
 
     vec4 p0 = (p01 - p00) * u + p00;
     vec4 p1 = (p11 - p10) * u + p10;
-    vec4 p = (p1 - p0) * v + p0 + normal * Height;
+    vec4 p = (p1 - p0) * v + p0 + normal * height;
 
     gl_Position = projection * view * u_Model * p;
     FragPos = vec3(u_Model * p);
