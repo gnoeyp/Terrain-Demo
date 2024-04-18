@@ -1,6 +1,7 @@
 #include "Terrain.h"
 #include "Texture.h"
 #include <GL/glew.h>
+#include <imgui.h>
 #include <iostream>
 #include <stb_image.h>
 #include <vector>
@@ -96,6 +97,8 @@ Terrain::Terrain(const char* heightmapPath, const char* texturePath, const char*
 
 void Terrain::Draw(const Shader& shader) const
 {
+	if (m_Wireframe)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glBindVertexArray(m_VAO);
 
 	m_Heightmap.Bind(0);
@@ -111,9 +114,26 @@ void Terrain::Draw(const Shader& shader) const
 	shader.SetInt("u_NormalTexture", 2);
 	shader.SetInt("u_MountainTexture", 3);
 	shader.SetInt("u_MountainNormalTexture", 4);
+	shader.SetInt("u_TextureMethodType", m_RandomizaionMode);
 	shader.SetFloat("u_TexelSizeU", 1.0f / (float)m_Heightmap.GetWidth());
 	shader.SetFloat("u_TexelSizeV", 1.0f / (float)m_Heightmap.GetHeight());
 
 	glDrawArrays(GL_PATCHES, 0, NUM_PATCH_PTS * rez * rez);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+}
+
+void Terrain::ImGuiRender()
+{
+	if (ImGui::CollapsingHeader("Terrain"))
+	{
+		ImGui::Checkbox("Wireframe", &m_Wireframe);
+
+		ImGui::RadioButton("Terrain texture 1", &m_RandomizaionMode, 0);
+		ImGui::SameLine();
+		ImGui::RadioButton("Terrain texture 2", &m_RandomizaionMode, 1);
+		ImGui::SameLine();
+		ImGui::RadioButton("Terrain texture 3", &m_RandomizaionMode, 2);
+
+	}
 }
 

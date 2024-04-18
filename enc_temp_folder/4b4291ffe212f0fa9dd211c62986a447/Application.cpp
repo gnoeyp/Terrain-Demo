@@ -308,6 +308,11 @@ int main()
 		ImGui::SliderFloat("Light position X", &lightPos.x, -100.0f, 100.0f);
 		ImGui::SliderFloat("Light position Y", &lightPos.y, -100.0f, 100.0f);
 		ImGui::SliderFloat("Light position Z", &lightPos.z, -100.0f, 100.0f);
+		//ImGui::RadioButton("Terrain texture 1", &terrainTexture, 0);
+		//ImGui::SameLine();
+		//ImGui::RadioButton("Terrain texture 2", &terrainTexture, 1);
+		//ImGui::SameLine();
+		//ImGui::RadioButton("Terrain texture 3", &terrainTexture, 2);
 
 		fire.ImGuiRender();
 		terrain.ImGuiRender();
