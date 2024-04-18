@@ -63,9 +63,6 @@
     <ClCompile Include="src\CubeMap.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ground.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="src\Terrain.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -1017,9 +1014,6 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="src\CubeMap.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Ground.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="src\Terrain.h">
@@ -2282,8 +2276,8 @@
     <None Include="vendor\glm\glm\gtx\wrap.inl">
       <Filter>헤더 파일</Filter>
     </None>
-    <None Include="res\shaders\basic_texture.vert" />
-    <None Include="res\shaders\basic_texture.frag" />
+    <None Include="res\shaders\house.vert" />
+    <None Include="res\shaders\house.frag" />
     <None Include="vendor\imgui\misc\debuggers\imgui.natstepfilter" />
     <None Include="res\shaders\skybox.vert" />
     <None Include="res\shaders\skybox.frag" />
@@ -2295,6 +2289,12 @@
     <None Include="res\shaders\fire.frag" />
     <None Include="res\shaders\heightmap.tesc" />
     <None Include="res\shaders\heightmap.tese" />
+    <None Include="res\shaders\basic_texture.vert" />
+    <None Include="res\shaders\basic_texture.frag" />
+    <None Include="res\shaders\blur.vert" />
+    <None Include="res\shaders\blur.frag" />
+    <None Include="res\shaders\bloom.vert" />
+    <None Include="res\shaders\bloom.frag" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="vendor\imgui\misc\debuggers\imgui.natvis" />

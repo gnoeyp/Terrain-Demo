@@ -7,6 +7,7 @@
 
 Shader* Shader::BASIC = nullptr;
 Shader* Shader::BASIC_TEXTURE = nullptr;
+Shader* Shader::HOUSE = nullptr;
 Shader* Shader::HEIGHTMAP = nullptr;
 Shader* Shader::FIRE = nullptr;
 

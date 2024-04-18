@@ -1,5 +1,8 @@
 #version 410 core
 
+layout(location = 0) out vec4 FragColor;
+layout(location = 1) out vec4 BrightColor;
+
 uniform sampler2D u_Heightmap;
 uniform sampler2D u_Texture;
 uniform sampler2D u_NormalTexture;
@@ -20,7 +23,6 @@ layout (std140) uniform u_DirLight
 	vec3 specular;
 };
 
-out vec4 FragColor;
 in vec2 TexCoord;
 in vec2 HeightCoord;
 in vec3 FragPos;
@@ -193,6 +195,7 @@ void main()
 	vec4 foggedColor = mix(fogColor, color, visibility);
 
     FragColor = foggedColor;
+    BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
     
 	if (distance > 500.0)
 		discard;

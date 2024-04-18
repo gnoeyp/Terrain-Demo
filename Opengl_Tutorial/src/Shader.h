@@ -19,6 +19,7 @@ public:
 
 	static Shader* BASIC;
 	static Shader* BASIC_TEXTURE;
+	static Shader* HOUSE;
 	static Shader* HEIGHTMAP;
 	static Shader* FIRE;
 
@@ -39,13 +40,14 @@ public:
 	{
 		Shader::BASIC = new Shader("res/shaders/basic.vert", "res/shaders/basic.frag");
 		Shader::BASIC_TEXTURE = new Shader("res/shaders/basic_texture.vert", "res/shaders/basic_texture.frag");
+		Shader::HOUSE = new Shader("res/shaders/house.vert", "res/shaders/house.frag");
 		Shader::HEIGHTMAP = new Shader("res/shaders/heightmap.vert", "res/shaders/heightmap.frag", "res/shaders/heightmap.tesc", "res/shaders/heightmap.tese");
 		Shader::FIRE = new Shader("res/shaders/fire.vert", "res/shaders/fire.frag");
 	}
 	static void Clear()
 	{
 		delete Shader::BASIC;
-		delete Shader::BASIC_TEXTURE;
+		delete Shader::HOUSE;
 		delete Shader::HEIGHTMAP;
 		delete Shader::FIRE;
 	}

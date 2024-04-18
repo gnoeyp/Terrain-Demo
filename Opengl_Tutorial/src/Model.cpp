@@ -1,3 +1,4 @@
+#include "GLUtils.h"
 #include "Model.h"
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
@@ -97,6 +98,8 @@ std::unique_ptr<Mesh> Model::ProcessMesh(const aiMesh* mesh, const aiScene* scen
 		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 		std::vector<MeshTexture> specularMaps = LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
 		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+		std::vector<MeshTexture> emissionMaps = LoadMaterialTextures(material, aiTextureType_EMISSIVE, "texture_emission");
+		textures.insert(textures.end(), emissionMaps.begin(), emissionMaps.end());
 	}
 
 	return std::unique_ptr<Mesh>(new Mesh(vertices, indices, textures));
@@ -142,8 +145,11 @@ unsigned int Model::TextureFromFile(const char* path, const std::string& directo
 	unsigned int textureID;
 	glGenTextures(1, &textureID);
 
+	stbi_set_flip_vertically_on_load(true);
+
 	int width, height, nrComponents;
 	unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+
 	if (data)
 	{
 		unsigned int format;
@@ -153,6 +159,8 @@ unsigned int Model::TextureFromFile(const char* path, const std::string& directo
 			format = GL_RGB;
 		else if (nrComponents == 4)
 			format = GL_RGBA;
+		else
+			ASSERT(false);
 
 		glBindTexture(GL_TEXTURE_2D, textureID);
 		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);

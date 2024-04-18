@@ -39,6 +39,7 @@ void Mesh::Draw(const Shader& shader) const
 {
 	unsigned int diffuseNr = 1;
 	unsigned int specularNr = 1;
+	unsigned int emissionNr = 1;
 	for (unsigned int i = 0; i < m_Textures.size(); i++)
 	{
 		glActiveTexture(GL_TEXTURE0 + i);
@@ -48,6 +49,8 @@ void Mesh::Draw(const Shader& shader) const
 			number = diffuseNr++;
 		else if (name == "texture_specular")
 			number = specularNr++;
+		else if (name == "texture_emission")
+			number = emissionNr++;
 		shader.SetInt((name + std::to_string(number)).c_str(), i);
 		glBindTexture(GL_TEXTURE_2D, m_Textures[i].id);
 	}

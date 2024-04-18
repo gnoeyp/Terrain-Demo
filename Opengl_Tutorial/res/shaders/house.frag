@@ -1,6 +1,7 @@
 #version 410 core
 
-out vec4 color;
+layout (location = 0) out vec4 FragColor;
+layout (location = 1) out vec4 BrightColor;
 
 in vec3 FragPos;
 in vec3 Normal;
@@ -20,6 +21,7 @@ layout (std140) uniform u_DirLight
 	DirLight dirLight;
 };
 
+uniform sampler2D screenTexture;
 uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_diffuse2;
 uniform sampler2D texture_diffuse3;
@@ -48,5 +50,11 @@ void main()
 
 	vec3 emissionColor = texture(texture_emission1, TexCoords).rgb;
 
-	color = vec4(ambientColor + diffuseColor + specularColor + emissionColor, 1.0);
+	FragColor = vec4(ambientColor + diffuseColor + specularColor + emissionColor, 1.0);
+
+	float brightness = dot(FragColor.rgb, vec3(1.0, 0.80, 0.0));
+	if (brightness > 1.0)
+		BrightColor = vec4(FragColor.rgb, 1.0);
+	else
+		BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
 }
