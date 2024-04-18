@@ -197,6 +197,22 @@ void main()
     texColor = mix(lowTexture, highTexture, smoothstep(-3.0, 3.0, height - 15.0));
     normalMap = mix(lowNormal, highNormal, smoothstep(-3.0, 3.0, height - 15.0));
 
+//    switch(u_TextureMethodType)
+//    {
+//    case 0:
+//		texColor = textureRotation(GetTextureSampler(height, 15.0), TexCoord);
+//        normalMap = textureRotation(GetNormalTextureSampler(height, 15.0), TexCoord).rgb;
+//		break;
+//    case 1:
+//		texColor = textureVoronoi(GetTextureSampler(height, 15.0), TexCoord);
+//        normalMap = textureVoronoi(GetNormalTextureSampler(height, 15.0), TexCoord).rgb;
+//		break;
+//    case 2:
+//		texColor = textureOffset(GetTextureSampler(height, 15.0), TexCoord);
+//        normalMap = textureOffset(GetNormalTextureSampler(height, 15.0), TexCoord).rgb;
+//    }
+//
+//
 	float ambientStrength = 0.1f;
 	vec3 ambientColor = ambientStrength * ambient;
 

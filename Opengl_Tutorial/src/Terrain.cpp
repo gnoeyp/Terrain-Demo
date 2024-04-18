@@ -8,10 +8,13 @@
 unsigned int rez = 20;
 unsigned int NUM_PATCH_PTS = 4;
 
-Terrain::Terrain(const char* heightmapPath, const char* texturePath, const char* normalPath)
+Terrain::Terrain(const char* heightmapPath, const char* texturePath, const char* normalPath, const char* mountainTexturePath, const char* mountainNormalPath)
 	: m_Heightmap(heightmapPath, { GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR }),
 	m_Texture(texturePath, { GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR }),
-	m_Normalmap(normalPath, { GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR })
+	m_Normalmap(normalPath, { GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR }),
+	m_MountainTexture(mountainTexturePath, { GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR }),
+	m_MountainNormalmap(mountainNormalPath, { GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR })
+
 {
 	std::vector<float> positions;
 	std::vector<float> heightmapCoords;
@@ -98,12 +101,16 @@ void Terrain::Draw(const Shader& shader) const
 	m_Heightmap.Bind(0);
 	m_Texture.Bind(1);
 	m_Normalmap.Bind(2);
+	m_MountainTexture.Bind(3);
+	m_MountainNormalmap.Bind(4);
 
 	shader.Bind();
 
 	shader.SetInt("u_Heightmap", 0);
 	shader.SetInt("u_Texture", 1);
 	shader.SetInt("u_NormalTexture", 2);
+	shader.SetInt("u_MountainTexture", 3);
+	shader.SetInt("u_MountainNormalTexture", 4);
 	shader.SetFloat("u_TexelSizeU", 1.0f / (float)m_Heightmap.GetWidth());
 	shader.SetFloat("u_TexelSizeV", 1.0f / (float)m_Heightmap.GetHeight());
 

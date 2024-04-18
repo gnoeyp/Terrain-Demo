@@ -24,16 +24,6 @@ Fire::Fire(float x, float y, float z)
 	Particle particle = GenerateFireParticle();
 	m_Particles.push_back(particle);
 
-	// position
-	instanceAttributes.push_back(particle.GetPosition().x);
-	instanceAttributes.push_back(particle.GetPosition().y);
-	instanceAttributes.push_back(particle.GetPosition().z);
-	// color
-	instanceAttributes.push_back(1.0f);
-	instanceAttributes.push_back(0.0f);
-	instanceAttributes.push_back(0.0f);
-	instanceAttributes.push_back(1.0f);
-
 	std::vector<float> vertices;
 	for (unsigned int i = 0; i < 4; i++)
 	{
@@ -51,7 +41,7 @@ Fire::Fire(float x, float y, float z)
 
 	GLCall(glGenBuffers(1, &m_InstanceVBO));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_InstanceVBO));
-	GLCall(glBufferData(GL_ARRAY_BUFFER, 7 * m_MaxParticles * sizeof(float), &instanceAttributes[0], GL_STATIC_DRAW));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, 7 * m_MaxParticles * sizeof(float), nullptr, GL_STATIC_DRAW));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 
 	GLCall(glGenVertexArrays(1, &m_VAO));

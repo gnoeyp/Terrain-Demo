@@ -180,12 +180,17 @@ int main()
 	//Ground ground;
 	Terrain terrain(
 		"res/textures/iceland_heightmap.png",
-		"res/textures/mud_cracked_dry/mud_cracked_dry_03_diff_1k.jpg",
-		"res/textures/mud_cracked_dry/AnyConv.com__mud_cracked_dry_03_nor_gl_1k.png"
+		//"res/textures/mud_cracked_dry/mud_cracked_dry_03_diff_1k.jpg",
+		//"res/textures/mud_cracked_dry/AnyConv.com__mud_cracked_dry_03_nor_gl_1k.png"
+		//"res/textures/sand_muddy/TCom_Sand_Muddy2_2x2_1K_albedo.jpg",
+		//"res/textures/sand_muddy/TCom_Sand_Muddy2_2x2_1K_normal.jpg"
+		"res/textures/GroundDirtRocky020/GroundDirtRocky020_COL_2K.jpg",
+		"res/textures/GroundDirtRocky020/GroundDirtRocky020_NRM_2K.jpg",
+		"res/textures/gray_rocks/gray_rocks_diff_4k.jpg",
+		"res/textures/gray_rocks/gray_rocks_nor_gl_4k.jpg"
 	);
 	Model house("res/textures/middle-earth-house/AllHouse.obj");
 	Model wood("res/textures/low_obj_1500/low_obj_1500.obj");
-	//Model ourModel("res/textures/backpack/backpack.obj");
 
 	int terrainTexture = 0;
 
@@ -206,9 +211,9 @@ int main()
 
 
 	// Instancing
-	//Shader::FIRE->SetVec3f("u_CameraUp", camera.GetUp());
-	//Shader::FIRE->SetVec3f("u_CameraFront", camera.GetFront());
-	//Fire fire(3.0f, 9.75f, 5.2f);
+	Shader::FIRE->SetVec3f("u_CameraUp", camera.GetUp());
+	Shader::FIRE->SetVec3f("u_CameraFront", camera.GetFront());
+	Fire fire(3.0f, 9.75f, 5.2f);
 
 
 	// Framebuffer
@@ -246,9 +251,9 @@ int main()
 		std::cout << "Framebuffer not complete!" << std::endl;
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 	unsigned int bloomFramebuffers[2];
 	glGenFramebuffers(2, bloomFramebuffers);
-
 
 	unsigned int textureColorbuffers[2];
 	glGenTextures(2, textureColorbuffers);
@@ -279,7 +284,7 @@ int main()
 		lastFrame = currentFrame;
 
 		// Update
-		//fire.Update(deltaTime);
+		fire.Update(deltaTime);
 
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -296,7 +301,7 @@ int main()
 		ImGui::SameLine();
 		ImGui::RadioButton("Terrain texture 3", &terrainTexture, 2);
 
-		//fire.ImGuiRender();
+		fire.ImGuiRender();
 
 		processInput(window);
 
@@ -363,7 +368,7 @@ int main()
 		skyboxShader.SetMat4f("u_View", glm::mat4(glm::mat3(camera.GetViewMatrix())));
 		cubeMap.Draw(skyboxShader);
 
-		//fire.Draw();
+		fire.Draw();
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		// bloom
