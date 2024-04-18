@@ -52,9 +52,5 @@ void main()
 
 	FragColor = vec4(ambientColor + diffuseColor + specularColor + emissionColor, 1.0);
 
-	float brightness = dot(FragColor.rgb, vec3(1.0, 0.80, 0.0));
-	if (brightness > 1.0)
-		BrightColor = vec4(FragColor.rgb, 1.0);
-	else
-		BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
+	BrightColor = vec4(emissionColor, 1.0);
 }
