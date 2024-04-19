@@ -10,6 +10,7 @@ Shader* Shader::BASIC_TEXTURE = nullptr;
 Shader* Shader::HOUSE = nullptr;
 Shader* Shader::HEIGHTMAP = nullptr;
 Shader* Shader::FIRE = nullptr;
+Shader* Shader::SKYBOX = nullptr;
 
 std::string Shader::ParseShader(const char* path) const
 {

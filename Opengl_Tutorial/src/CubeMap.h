@@ -11,6 +11,6 @@ private:
 public:
 	CubeMap(std::vector<std::string> faces);
 	CubeMap(const char* path);
-	void Draw(const Shader&) const;
+	void Draw() const;
 };
 

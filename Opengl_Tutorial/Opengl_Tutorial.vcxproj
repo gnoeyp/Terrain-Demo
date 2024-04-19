@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="src\CubeMap.cpp" />
     <ClCompile Include="src\Fire.cpp" />
+    <ClCompile Include="src\House.cpp" />
     <ClCompile Include="src\Particle.cpp" />
     <ClCompile Include="src\GLUtils.cpp" />
     <ClCompile Include="src\Model.cpp" />
@@ -151,6 +152,7 @@
     <ClCompile Include="src\Terrain.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\UniformBlock.cpp" />
+    <ClCompile Include="src\Wood.cpp" />
     <ClCompile Include="vendor\glm\glm\detail\glm.cpp" />
     <ClCompile Include="vendor\imgui\backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="vendor\imgui\backends\imgui_impl_opengl3.cpp" />
@@ -165,6 +167,7 @@
   <ItemGroup>
     <ClInclude Include="src\CubeMap.h" />
     <ClInclude Include="src\Fire.h" />
+    <ClInclude Include="src\House.h" />
     <ClInclude Include="src\Particle.h" />
     <ClInclude Include="src\GLUtils.h" />
     <ClInclude Include="src\Model.h" />
@@ -180,6 +183,7 @@
     <ClInclude Include="src\Terrain.h" />
     <ClInclude Include="src\Texture.h" />
     <ClInclude Include="src\UniformBlock.h" />
+    <ClInclude Include="src\Wood.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\compute_common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\compute_vector_decl.hpp" />

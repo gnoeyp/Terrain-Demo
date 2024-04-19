@@ -49,6 +49,7 @@ float skyboxVertices[] = {
 	 1.0f, -1.0f,  1.0f
 };
 
+// TODO: 멤버함수로 이동
 unsigned int GetFormat(int nrChannels)
 {
 	unsigned int format;
@@ -168,11 +169,12 @@ CubeMap::CubeMap(const char* path) : m_ID(0), m_VAO(0), m_VBO(0)
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 }
 
-void CubeMap::Draw(const Shader& shader) const
+void CubeMap::Draw() const
 {
 	glDepthFunc(GL_LEQUAL);
-	shader.Bind();
-	shader.SetInt("texture1", 0);
+	Shader::SKYBOX->Bind();
+	Shader::SKYBOX->SetInt("texture1", 0);
+	Shader::SKYBOX->SetMat4f("u_View", glm::mat4(glm::mat3(Camera::GetInstance().GetViewMatrix())));
 
 	glBindVertexArray(m_VAO);
 	glActiveTexture(GL_TEXTURE0);

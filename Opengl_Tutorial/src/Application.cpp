@@ -2,10 +2,12 @@
 #include "CubeMap.h"
 #include "Fire.h"
 #include "GLUtils.h"
+#include "House.h"
 #include "Model.h"
 #include "Shader.h"
 #include "Terrain.h"
 #include "UniformBlock.h"
+#include "Wood.h"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -253,10 +255,40 @@ int main()
 		"res/textures/GroundDirtRocky020/GroundDirtRocky020_COL_2K.jpg",
 		"res/textures/GroundDirtRocky020/GroundDirtRocky020_NRM_2K.jpg",
 		"res/textures/gray_rocks/gray_rocks_diff_4k.jpg",
-		"res/textures/gray_rocks/gray_rocks_nor_gl_4k.jpg"
+		"res/textures/gray_rocks/gray_rocks_nor_gl_4k.jpg",
+		glm::scale(
+			glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)),
+			glm::vec3(1.0f, 1.0f, 1.0f)
+		)
 	);
-	Model house("res/textures/middle-earth-house/AllHouse.obj");
-	Model wood("res/textures/low_obj_1500/low_obj_1500.obj");
+
+	House house(
+		glm::scale(
+			glm::translate(
+				glm::mat4(1.0f),
+				glm::vec3(0.0f, 10.0f, 0.0f)),
+			glm::vec3(1.0f, 1.0f, 1.0f)
+		));
+
+	Wood wood1(
+		glm::scale(
+			glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 9.7f, 5.0f)),
+			glm::vec3(0.02f, 0.02f, 0.02f)
+		)
+	);
+
+	Wood wood2(
+		glm::rotate(
+			glm::rotate(
+				glm::scale(
+					glm::translate(glm::mat4(1.0f), glm::vec3(2.7f, 9.7f, 5.3f)),
+					glm::vec3(0.02f, 0.02f, 0.02f)
+				),
+				glm::radians(90.f), glm::vec3(0.0f, 1.0f, 0.0f)
+			),
+			glm::radians(-15.f), glm::vec3(1.0f, 0.0f, 0.0f)
+		)
+	);
 
 	std::vector<unsigned int> sizes = { sizeof(glm::mat4), sizeof(glm::mat4) };
 	UniformBlock matrixUbo({ sizeof(glm::mat4), sizeof(glm::mat4) }, "u_Matrices");
@@ -269,6 +301,7 @@ int main()
 	matrixUbo.BindShader(Shader::HEIGHTMAP);
 	matrixUbo.BindShader(Shader::BASIC);
 	matrixUbo.BindShader(Shader::HOUSE);
+	matrixUbo.BindShader(Shader::SKYBOX);
 
 	dirLightUbo.BindShader(Shader::HOUSE);
 	dirLightUbo.BindShader(Shader::HEIGHTMAP);
@@ -328,43 +361,11 @@ int main()
 		dirLightUbo.SetData(2, &diffuse[0]);
 		dirLightUbo.SetData(3, &specular[0]);
 
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 10.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
-		Shader::HOUSE->SetMat4f("u_Model", model);
-
-		Shader::HOUSE->SetVec3f("u_ViewPos", camera.GetPosition());
-
-		house.Draw(*Shader::HOUSE);
-
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(3.0f, 9.7f, 5.0f));
-		model = glm::scale(model, glm::vec3(0.02f, 0.02f, 0.02f));
-		Shader::HOUSE->SetMat4f("u_Model", model);
-		wood.Draw(*Shader::HOUSE);
-
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(2.7f, 9.7f, 5.3f));
-		model = glm::scale(model, glm::vec3(0.02f, 0.02f, 0.02f));
-		model = glm::rotate(model, glm::radians(90.f), glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(-15.f), glm::vec3(1.0f, 0.0f, 0.0f));
-		Shader::HOUSE->SetMat4f("u_Model", model);
-		wood.Draw(*Shader::HOUSE);
-
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
-
-		Shader::BASIC->Bind();
-		Shader::BASIC->SetMat4f("u_Model", model);
-
-		terrain.Draw(*Shader::HEIGHTMAP);
-
-		skyboxShader.Bind();
-		skyboxShader.SetMat4f("u_Proj", projection);
-		skyboxShader.SetMat4f("u_View", glm::mat4(glm::mat3(camera.GetViewMatrix())));
-		cubeMap.Draw(skyboxShader);
-
+		house.Draw();
+		wood1.Draw();
+		wood2.Draw();
+		terrain.Draw();
+		cubeMap.Draw();
 		fire.Draw();
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -406,6 +407,11 @@ int main()
 		glfwPollEvents();
 	}
 
+	glDeleteFramebuffers(1, &framebuffer);
+	glDeleteFramebuffers(2, bloomFramebuffers);
+	glDeleteTextures(2, sceneColorbuffers);
+	glDeleteTextures(2, textureColorbuffers);
+	glDeleteRenderbuffers(1, &rbo);
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();

@@ -8,15 +8,20 @@
 #include <stb_image.h>
 #include <vector>
 
-unsigned int rez = 20;
-unsigned int NUM_PATCH_PTS = 4;
-
-Terrain::Terrain(const char* heightmapPath, const char* texturePath, const char* normalPath, const char* mountainTexturePath, const char* mountainNormalPath)
+Terrain::Terrain(
+	const char* heightmapPath,
+	const char* texturePath,
+	const char* normalPath,
+	const char* mountainTexturePath,
+	const char* mountainNormalPath,
+	const glm::mat4& modelMatrix
+)
 	: m_Heightmap(heightmapPath, { GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR }),
 	m_Texture(texturePath, { GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR }),
 	m_Normalmap(normalPath, { GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR }),
 	m_MountainTexture(mountainTexturePath, { GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR }),
-	m_MountainNormalmap(mountainNormalPath, { GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR })
+	m_MountainNormalmap(mountainNormalPath, { GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR }),
+	m_ModelMatrix(modelMatrix)
 {
 	std::vector<float> positions;
 	std::vector<float> heightmapCoords;
@@ -27,50 +32,50 @@ Terrain::Terrain(const char* heightmapPath, const char* texturePath, const char*
 	int width = m_Heightmap.GetWidth();
 	int height = m_Heightmap.GetHeight();
 
-	for (unsigned int i = 0; i < rez; i++)
+	for (unsigned int i = 0; i < REZ; i++)
 	{
-		for (unsigned int j = 0; j < rez; j++)
+		for (unsigned int j = 0; j < REZ; j++)
 		{
-			positions.push_back(-width / 2.0f + width * i / (float)rez); // v.x
+			positions.push_back(-width / 2.0f + width * i / (float)REZ); // v.x
 			positions.push_back(0.0f); // v.y
-			positions.push_back(-height / 2.0f + height * j / (float)rez); // v.z
+			positions.push_back(-height / 2.0f + height * j / (float)REZ); // v.z
 
-			positions.push_back(-width / 2.0f + width * (i + 1) / (float)rez); // v.x
+			positions.push_back(-width / 2.0f + width * (i + 1) / (float)REZ); // v.x
 			positions.push_back(0.0f); // v.y
-			positions.push_back(-height / 2.0f + height * j / (float)rez); // v.z
+			positions.push_back(-height / 2.0f + height * j / (float)REZ); // v.z
 
-			positions.push_back(-width / 2.0f + width * i / (float)rez); // v.x
+			positions.push_back(-width / 2.0f + width * i / (float)REZ); // v.x
 			positions.push_back(0.0f); // v.y
-			positions.push_back(-height / 2.0f + height * (j + 1) / (float)rez); // v.z
+			positions.push_back(-height / 2.0f + height * (j + 1) / (float)REZ); // v.z
 
-			positions.push_back(-width / 2.0f + width * (i + 1) / (float)rez); // v.x
+			positions.push_back(-width / 2.0f + width * (i + 1) / (float)REZ); // v.x
 			positions.push_back(0.0f); // v.y
-			positions.push_back(-height / 2.0f + height * (j + 1) / (float)rez); // v.z
+			positions.push_back(-height / 2.0f + height * (j + 1) / (float)REZ); // v.z
 
-			heightmapCoords.push_back(i / (float)rez); // u
-			heightmapCoords.push_back(j / (float)rez); // v
+			heightmapCoords.push_back(i / (float)REZ); // u
+			heightmapCoords.push_back(j / (float)REZ); // v
 
-			heightmapCoords.push_back((i + 1) / (float)rez); // u
-			heightmapCoords.push_back(j / (float)rez); // v
+			heightmapCoords.push_back((i + 1) / (float)REZ); // u
+			heightmapCoords.push_back(j / (float)REZ); // v
 
-			heightmapCoords.push_back(i / (float)rez); // u
-			heightmapCoords.push_back((j + 1) / (float)rez); // v
+			heightmapCoords.push_back(i / (float)REZ); // u
+			heightmapCoords.push_back((j + 1) / (float)REZ); // v
 
-			heightmapCoords.push_back((i + 1) / (float)rez); // u
-			heightmapCoords.push_back((j + 1) / (float)rez); // v
+			heightmapCoords.push_back((i + 1) / (float)REZ); // u
+			heightmapCoords.push_back((j + 1) / (float)REZ); // v
 
 
-			textureCoords.push_back(i * width / (float)rez);
-			textureCoords.push_back(j * height / (float)rez);
+			textureCoords.push_back(i * width / (float)REZ);
+			textureCoords.push_back(j * height / (float)REZ);
 
-			textureCoords.push_back((i + 1) * width / (float)rez);
-			textureCoords.push_back(j * height / (float)rez);
+			textureCoords.push_back((i + 1) * width / (float)REZ);
+			textureCoords.push_back(j * height / (float)REZ);
 
-			textureCoords.push_back(i * width / (float)rez);
-			textureCoords.push_back((j + 1) * height / (float)rez);
+			textureCoords.push_back(i * width / (float)REZ);
+			textureCoords.push_back((j + 1) * height / (float)REZ);
 
-			textureCoords.push_back((i + 1) * width / (float)rez);
-			textureCoords.push_back((j + 1) * height / (float)rez);
+			textureCoords.push_back((i + 1) * width / (float)REZ);
+			textureCoords.push_back((j + 1) * height / (float)REZ);
 		}
 	}
 
@@ -96,7 +101,7 @@ Terrain::Terrain(const char* heightmapPath, const char* texturePath, const char*
 	glPatchParameteri(GL_PATCH_VERTICES, NUM_PATCH_PTS);
 }
 
-void Terrain::Draw(const Shader& shader) const
+void Terrain::Draw() const
 {
 	if (m_Wireframe)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -126,7 +131,7 @@ void Terrain::Draw(const Shader& shader) const
 	Shader::HEIGHTMAP->SetFloat("u_TexelSizeU", 1.0f / (float)m_Heightmap.GetWidth());
 	Shader::HEIGHTMAP->SetFloat("u_TexelSizeV", 1.0f / (float)m_Heightmap.GetHeight());
 
-	glDrawArrays(GL_PATCHES, 0, NUM_PATCH_PTS * rez * rez);
+	glDrawArrays(GL_PATCHES, 0, NUM_PATCH_PTS * REZ * REZ);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
