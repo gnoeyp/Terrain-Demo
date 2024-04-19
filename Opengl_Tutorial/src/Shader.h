@@ -13,6 +13,9 @@ private:
 	unsigned int CompileShader(unsigned int type, const std::string& source) const;
 	std::string ParseShader(const char* path) const;
 	unsigned int CreateShader(const char* vertPath, const char* fragPath, const char* tcsPath, const char* tesPath) const;
+
+	Shader& operator=(const Shader&);
+	Shader(const Shader&);
 public:
 	Shader(const char* vertPath, const char* fragPath, const char* tcsPath = nullptr, const char* tesPath = nullptr);
 	~Shader();

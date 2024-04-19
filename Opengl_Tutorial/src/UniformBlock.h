@@ -11,6 +11,8 @@ private:
 	std::vector<unsigned int> m_Sizes;
 	std::string m_Name;
 	unsigned int CalOffset(unsigned int index) const;
+	UniformBlock& operator=(const UniformBlock&);
+	UniformBlock(const UniformBlock&);
 public:
 	UniformBlock(const std::vector<unsigned int>& sizes, const std::string& name);
 	void SetData(unsigned int index, const void* data);

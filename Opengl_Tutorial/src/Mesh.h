@@ -26,6 +26,8 @@ public:
 	Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<MeshTexture>& textures);
 	~Mesh();
 	void Draw(const Shader& shader) const;
+	Mesh& operator=(const Mesh&);
+	Mesh(const Mesh&);
 private:
 	unsigned int m_VAO, m_VBO, m_EBO;
 	std::vector<Vertex> m_Vertices;

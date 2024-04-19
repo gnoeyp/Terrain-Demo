@@ -12,6 +12,8 @@ class Texture
 private:
 	unsigned int m_ID;
 	int m_Width, m_Height;
+	Texture& operator=(const Texture&);
+	Texture(const Texture&);
 public:
 	Texture(const char* path, const TextureParameters& textureParams);
 	~Texture();

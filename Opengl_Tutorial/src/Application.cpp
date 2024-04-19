@@ -325,7 +325,7 @@ int main()
 
 		dirLightUbo.SetData(0, &lightDirection[0]);
 		dirLightUbo.SetData(1, &ambient[0]);
-		dirLightUbo.SetData(2, &diffuse[0]));
+		dirLightUbo.SetData(2, &diffuse[0]);
 		dirLightUbo.SetData(3, &specular[0]);
 
 		glm::mat4 model = glm::mat4(1.0f);

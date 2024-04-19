@@ -30,6 +30,9 @@ private:
 	int m_ParticlesPerFrame = 3;
 	const unsigned int m_MaxParticles = 1000;
 	float m_Force = 0.015f;
+	// TODO: ∏Æ∆—≈‰∏µ
+	Fire& operator=(const Fire&);
+	Fire(const Fire&);
 public:
 	Fire(float x, float y, float z);
 	void Update(float dt);

@@ -17,7 +17,6 @@ Terrain::Terrain(const char* heightmapPath, const char* texturePath, const char*
 	m_Normalmap(normalPath, { GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR }),
 	m_MountainTexture(mountainTexturePath, { GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR }),
 	m_MountainNormalmap(mountainNormalPath, { GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR })
-
 {
 	std::vector<float> positions;
 	std::vector<float> heightmapCoords;
@@ -142,7 +141,6 @@ void Terrain::ImGuiRender()
 		ImGui::RadioButton("Terrain texture 2", &m_RandomizaionMode, 1);
 		ImGui::SameLine();
 		ImGui::RadioButton("Terrain texture 3", &m_RandomizaionMode, 2);
-
 	}
 }
 
