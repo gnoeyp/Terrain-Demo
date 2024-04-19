@@ -9,7 +9,6 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <glm/matrix.hpp>
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
@@ -239,7 +238,7 @@ int main()
 	CubeMap cubeMap(faces);
 
 	glm::vec3 lightDirection(-0.2f, -1.0f, -0.3f);
-	glm::vec3 lightPos(0.0f, 50.0f, 0.0f);
+	//glm::vec3 lightPos(0.0f, 50.0f, 0.0f);
 	glm::vec3 ambient(0.5f, 0.5f, 0.5f);
 	glm::vec3 diffuse(0.5f, 0.5f, 0.5f);
 	glm::vec3 specular(1.0f, 1.0f, 1.0f);
@@ -303,11 +302,8 @@ int main()
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 		ImGui::ColorEdit3("Ambient", &ambient[0]);
-		ImGui::ColorEdit3("Diffuse", glm::value_ptr(diffuse));
+		ImGui::ColorEdit3("Diffuse", &diffuse[0]);
 		ImGui::ColorEdit3("Specular", &specular[0]);
-		ImGui::SliderFloat("Light position X", &lightPos.x, -100.0f, 100.0f);
-		ImGui::SliderFloat("Light position Y", &lightPos.y, -100.0f, 100.0f);
-		ImGui::SliderFloat("Light position Z", &lightPos.z, -100.0f, 100.0f);
 
 		fire.ImGuiRender();
 		terrain.ImGuiRender();
@@ -329,7 +325,7 @@ int main()
 
 		dirLightUbo.SetData(0, &lightDirection[0]);
 		dirLightUbo.SetData(1, &ambient[0]);
-		dirLightUbo.SetData(2, glm::value_ptr(diffuse));
+		dirLightUbo.SetData(2, &diffuse[0]));
 		dirLightUbo.SetData(3, &specular[0]);
 
 		glm::mat4 model = glm::mat4(1.0f);
@@ -361,13 +357,6 @@ int main()
 
 		Shader::BASIC->Bind();
 		Shader::BASIC->SetMat4f("u_Model", model);
-
-		Shader::HEIGHTMAP->Bind();
-		Shader::HEIGHTMAP->SetMat4f("u_Model", model);
-		Shader::HEIGHTMAP->SetVec3f("u_ViewPos", camera.GetPosition());
-
-		Shader::HEIGHTMAP->SetVec3f("u_FogColor", 0.35f, 0.46f, 0.56f);
-		Shader::HEIGHTMAP->SetVec3f("u_LightPos", lightPos);
 
 		terrain.Draw(*Shader::HEIGHTMAP);
 

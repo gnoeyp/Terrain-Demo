@@ -1,6 +1,8 @@
 #include "Terrain.h"
 #include "Texture.h"
 #include <GL/glew.h>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/matrix.hpp>
 #include <imgui.h>
 #include <iostream>
 #include <stb_image.h>
@@ -107,16 +109,23 @@ void Terrain::Draw(const Shader& shader) const
 	m_MountainTexture.Bind(3);
 	m_MountainNormalmap.Bind(4);
 
-	shader.Bind();
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+	Camera& camera = Camera::GetInstance();
 
-	shader.SetInt("u_Heightmap", 0);
-	shader.SetInt("u_Texture", 1);
-	shader.SetInt("u_NormalTexture", 2);
-	shader.SetInt("u_MountainTexture", 3);
-	shader.SetInt("u_MountainNormalTexture", 4);
-	shader.SetInt("u_TextureMethodType", m_RandomizaionMode);
-	shader.SetFloat("u_TexelSizeU", 1.0f / (float)m_Heightmap.GetWidth());
-	shader.SetFloat("u_TexelSizeV", 1.0f / (float)m_Heightmap.GetHeight());
+	Shader::HEIGHTMAP->Bind();
+	Shader::HEIGHTMAP->SetMat4f("u_Model", model);
+	Shader::HEIGHTMAP->SetVec3f("u_ViewPos", camera.GetPosition());
+	Shader::HEIGHTMAP->SetVec3f("u_FogColor", 0.35f, 0.46f, 0.56f);
+	Shader::HEIGHTMAP->SetInt("u_Heightmap", 0);
+	Shader::HEIGHTMAP->SetInt("u_Texture", 1);
+	Shader::HEIGHTMAP->SetInt("u_NormalTexture", 2);
+	Shader::HEIGHTMAP->SetInt("u_MountainTexture", 3);
+	Shader::HEIGHTMAP->SetInt("u_MountainNormalTexture", 4);
+	Shader::HEIGHTMAP->SetInt("u_TextureMethodType", m_RandomizaionMode);
+	Shader::HEIGHTMAP->SetFloat("u_TexelSizeU", 1.0f / (float)m_Heightmap.GetWidth());
+	Shader::HEIGHTMAP->SetFloat("u_TexelSizeV", 1.0f / (float)m_Heightmap.GetHeight());
 
 	glDrawArrays(GL_PATCHES, 0, NUM_PATCH_PTS * rez * rez);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

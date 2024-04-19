@@ -305,14 +305,9 @@ int main()
 		ImGui::ColorEdit3("Ambient", &ambient[0]);
 		ImGui::ColorEdit3("Diffuse", glm::value_ptr(diffuse));
 		ImGui::ColorEdit3("Specular", &specular[0]);
-		ImGui::SliderFloat("Light position X", &lightPos.x, -100.0f, 100.0f);
-		ImGui::SliderFloat("Light position Y", &lightPos.y, -100.0f, 100.0f);
-		ImGui::SliderFloat("Light position Z", &lightPos.z, -100.0f, 100.0f);
-		//ImGui::RadioButton("Terrain texture 1", &terrainTexture, 0);
-		//ImGui::SameLine();
-		//ImGui::RadioButton("Terrain texture 2", &terrainTexture, 1);
-		//ImGui::SameLine();
-		//ImGui::RadioButton("Terrain texture 3", &terrainTexture, 2);
+		//ImGui::SliderFloat("Light position X", &lightPos.x, -100.0f, 100.0f);
+		//ImGui::SliderFloat("Light position Y", &lightPos.y, -100.0f, 100.0f);
+		//ImGui::SliderFloat("Light position Z", &lightPos.z, -100.0f, 100.0f);
 
 		fire.ImGuiRender();
 		terrain.ImGuiRender();
@@ -367,12 +362,7 @@ int main()
 		Shader::BASIC->Bind();
 		Shader::BASIC->SetMat4f("u_Model", model);
 
-		Shader::HEIGHTMAP->Bind();
-		Shader::HEIGHTMAP->SetMat4f("u_Model", model);
-		Shader::HEIGHTMAP->SetVec3f("u_ViewPos", camera.GetPosition());
-
-		Shader::HEIGHTMAP->SetVec3f("u_FogColor", 0.35f, 0.46f, 0.56f);
-		Shader::HEIGHTMAP->SetVec3f("u_LightPos", lightPos);
+		//Shader::HEIGHTMAP->SetVec3f("u_LightPos", lightPos);
 
 		terrain.Draw(*Shader::HEIGHTMAP);
 
