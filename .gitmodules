@@ -7,3 +7,6 @@
 [submodule ".\\Opengl_Tutorial\\vendor\\imgui"]
 	path = .\\Opengl_Tutorial\\vendor\\imgui
 	url = https://github.com/ocornut/imgui
+[submodule "Opengl_Tutorial/vendor/imGuiZOM.quat"]
+	path = Opengl_Tutorial/vendor/imGuiZOM.quat
+	url = https://github.com/BrutPitt/imGuIZMO.quat
