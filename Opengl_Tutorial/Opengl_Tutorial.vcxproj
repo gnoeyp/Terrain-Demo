@@ -76,7 +76,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;GLEW_STATIC;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>dependencies\assimp\include;dependencies\GLFW\include;dependencies\GLEW\include;vendor\glm;vendor\stb_image;vendor\imgui;vendor\imgui\backends;src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>dependencies\assimp\include;dependencies\GLFW\include;dependencies\GLEW\include;vendor\glm;vendor\stb_image;vendor\imgui;vendor\imgui\backends;vendor\imGuIZMO.quat;vendor;src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -93,7 +93,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;GLEW_STATIC;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>dependencies\assimp\include;dependencies\GLFW\include;dependencies\GLEW\include;vendor\glm;vendor\stb_image;vendor\imgui;vendor\imgui\backends;src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>dependencies\assimp\include;dependencies\GLFW\include;dependencies\GLEW\include;vendor\glm;vendor\stb_image;vendor\imgui;vendor\imgui\backends;vendor\imGuIZMO.quat;vendor;src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -154,6 +154,7 @@
     <ClCompile Include="src\UniformBlock.cpp" />
     <ClCompile Include="src\Wood.cpp" />
     <ClCompile Include="vendor\glm\glm\detail\glm.cpp" />
+    <ClCompile Include="vendor\imGuIZMO.quat\imGuIZMO.quat\imGuIZMOquat.cpp" />
     <ClCompile Include="vendor\imgui\backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="vendor\imgui\backends\imgui_impl_opengl3.cpp" />
     <ClCompile Include="vendor\imgui\imgui.cpp" />
@@ -472,6 +473,11 @@
     <ClInclude Include="vendor\glm\glm\vec3.hpp" />
     <ClInclude Include="vendor\glm\glm\vec4.hpp" />
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp" />
+    <ClInclude Include="vendor\imGuIZMO.quat\imGuIZMO.quat\imGuIZMOquat.h" />
+    <ClInclude Include="vendor\imGuIZMO.quat\imGuIZMO.quat\vgConfig.h" />
+    <ClInclude Include="vendor\imGuIZMO.quat\imGuIZMO.quat\vGizmo.h" />
+    <ClInclude Include="vendor\imGuIZMO.quat\imGuIZMO.quat\vGizmoMath.h" />
+    <ClInclude Include="vendor\imGuIZMO.quat\imGuIZMO.quat\vgMath.h" />
     <ClInclude Include="vendor\imgui\backends\imgui_impl_glfw.h" />
     <ClInclude Include="vendor\imgui\backends\imgui_impl_opengl3.h" />
     <ClInclude Include="vendor\imgui\backends\imgui_impl_opengl3_loader.h" />

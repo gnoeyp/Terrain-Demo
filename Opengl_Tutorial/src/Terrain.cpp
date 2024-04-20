@@ -1,3 +1,4 @@
+#include "Mesh.h"
 #include "Terrain.h"
 #include "Texture.h"
 #include <GL/glew.h>
@@ -78,6 +79,7 @@ Terrain::Terrain(
 			textureCoords.push_back((j + 1) * height / (float)REZ);
 		}
 	}
+
 
 	glGenVertexArrays(1, &m_VAO);
 	glBindVertexArray(m_VAO);

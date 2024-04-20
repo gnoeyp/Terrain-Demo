@@ -16,7 +16,6 @@ out vec2 HCoord;
 
 uniform mat4 u_Model = mat4(1.0);
 uniform vec3 u_ViewPos;
-uniform vec3 u_LightPos;
 
 void main()
 {

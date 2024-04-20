@@ -87,6 +87,9 @@
     <ClCompile Include="src\Wood.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="vendor\imGuIZMO.quat\imGuIZMO.quat\imGuIZMOquat.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dependencies\GLEW\include\GL\eglew.h">
@@ -1044,6 +1047,21 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="src\Wood.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imGuIZMO.quat\imGuIZMO.quat\imGuIZMOquat.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imGuIZMO.quat\imGuIZMO.quat\vgConfig.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imGuIZMO.quat\imGuIZMO.quat\vGizmo.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imGuIZMO.quat\imGuIZMO.quat\vGizmoMath.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imGuIZMO.quat\imGuIZMO.quat\vgMath.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

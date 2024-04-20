@@ -12,7 +12,6 @@ uniform int u_TextureMethodType = 0;
 uniform mat4 u_Model;
 uniform float u_TexelSizeU;
 uniform float u_TexelSizeV;
-uniform vec3 u_LightPos;
 uniform vec3 u_ViewPos;
 uniform vec3 u_FogColor;
 
@@ -143,8 +142,7 @@ mat3 CalcTBN()
     vec3 n3 = normalize(cross(vec3(1.0, down-h,-1.0), vec3(1.0, right-h, 0)));
 
     mat3 model = mat3(u_Model);
-    // TODO: why minus?
-    vec3 normal = -normalize(model * (n0 + n1 + n2 + n3));
+    vec3 normal = normalize(model * (n0 + n1 + n2 + n3));
 
     vec3 tangent = normalize(model * vec3(2.0, right - left, 0.0));
     vec3 bitangent = normalize(cross(normal, tangent));
@@ -204,7 +202,7 @@ void main()
 	normalMap = normalMap * 2.0 - 1.0;
     vec3 normal = normalize(TBN * normalMap);
 
-    vec3 lightDir = normalize(u_LightPos - FragPos);
+    vec3 lightDir = normalize(direction);
 	float diff = max(dot(normal, lightDir), 0.0);
 	vec3 diffuseColor = diffuse * diff * vec3(texColor);
 

@@ -12,6 +12,8 @@
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/matrix.hpp>
+#include <imGuIZMO.quat/imGuIZMOquat.h>
+
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -319,6 +321,8 @@ int main()
 
 	InitFramebuffers();
 
+	quat qRot = quat(1.0f, 0.0f, 0.0f, 0.0f);
+	vec3 dir;
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -337,6 +341,9 @@ int main()
 		ImGui::ColorEdit3("Ambient", &ambient[0]);
 		ImGui::ColorEdit3("Diffuse", &diffuse[0]);
 		ImGui::ColorEdit3("Specular", &specular[0]);
+		ImGui::Text("Light Direction");
+		if (ImGui::gizmo3D("", dir))
+			lightDirection = glm::vec3(dir.x, dir.y, dir.z);
 
 		fire.ImGuiRender();
 		terrain.ImGuiRender();
