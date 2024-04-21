@@ -5,6 +5,7 @@
 #include <glm/matrix.hpp>
 
 enum class TerrainRenderMode { DEFAULT, WIREFRAME, NORMAL };
+enum class TerrainRandomizationMode { NONE, ROTATE, VORONOI, OFFSET };
 
 class Terrain
 {
@@ -15,7 +16,7 @@ private:
 	unsigned int m_NumStrips;
 	unsigned int m_NumVertsPerStrip;
 	TerrainRenderMode m_RenderMode = TerrainRenderMode::DEFAULT;
-	int m_RandomizationMode = 0;
+	TerrainRandomizationMode m_RandomizationMode = TerrainRandomizationMode::ROTATE;
 	Texture m_Heightmap, m_Texture, m_Normalmap, m_MountainTexture, m_MountainNormalmap;
 	glm::mat4 m_ModelMatrix;
 public:

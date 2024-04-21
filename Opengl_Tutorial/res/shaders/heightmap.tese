@@ -84,10 +84,6 @@ void main()
     vec4 vVec = p10 - p00;
     vec4 normal = normalize( vec4(cross(vVec.xyz, uVec.xyz), 0) );
 
-//    vec4 p0 = (p01 - p00) * u + p00;
-//    vec4 p1 = (p11 - p10) * u + p10;
-//    vec4 p = (p1 - p0) * v + p0 + normal * height;
-//
     vec4 pCenter = CalcPosition(u, v);
     vec4 p0 = CalcPosition(u - u_TexelSizeU, v);
     vec4 p1 = CalcPosition(u + u_TexelSizeU, v);
@@ -99,7 +95,7 @@ void main()
     vec3 n2 = normalize(cross(vec3(pCenter - p2), vec3(p0 - pCenter)));
     vec3 n3 = normalize(cross(vec3(p2 - pCenter), vec3(p1 - pCenter)));
 
-    SurfaceNormal = mat3(projection) * mat3(view) * normalize(mat3(u_Model) * (n0 + n1 + n2 + n3));
+    SurfaceNormal = normalize(mat3(u_Model) * (n0 + n1 + n2 + n3));
     vec3 tangent = normalize(mat3(u_Model) * vec3(p1 - p0));
     vec3 bitangent = normalize(cross(SurfaceNormal, tangent));
     SurfaceTangent = normalize(cross(bitangent, SurfaceNormal));

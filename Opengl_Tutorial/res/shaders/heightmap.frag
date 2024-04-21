@@ -155,12 +155,12 @@ vec4 GetTexture(sampler2D sampler)
     switch(u_TextureMethodType)
     {
     case 0:
-		return textureRotation(sampler, TexCoord);
-		break;
+		return texture(sampler, TexCoord);
     case 1:
-		return textureVoronoi(sampler, TexCoord);
-		break;
+		return textureRotation(sampler, TexCoord);
     case 2:
+		return textureVoronoi(sampler, TexCoord);
+    case 3:
 		return textureOffset(sampler, TexCoord);
     }
 }

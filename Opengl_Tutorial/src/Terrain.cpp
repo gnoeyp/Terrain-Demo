@@ -132,7 +132,23 @@ void Terrain::Draw() const
 	shader.SetInt("u_NormalTexture", 2);
 	shader.SetInt("u_MountainTexture", 3);
 	shader.SetInt("u_MountainNormalTexture", 4);
-	shader.SetInt("u_TextureMethodType", m_RandomizationMode);
+	int textureMethodType = 0;
+	switch (m_RandomizationMode)
+	{
+	case TerrainRandomizationMode::NONE:
+		textureMethodType = 0;
+		break;
+	case TerrainRandomizationMode::ROTATE:
+		textureMethodType = 1;
+		break;
+	case TerrainRandomizationMode::VORONOI:
+		textureMethodType = 2;
+		break;
+	case TerrainRandomizationMode::OFFSET:
+		textureMethodType = 3;
+		break;
+	}
+	shader.SetInt("u_TextureMethodType", textureMethodType);
 	shader.SetFloat("u_TexelSizeU", 1.0f / (float)m_Heightmap.GetWidth());
 	shader.SetFloat("u_TexelSizeV", 1.0f / (float)m_Heightmap.GetHeight());
 
@@ -153,11 +169,18 @@ void Terrain::ImGuiRender()
 		if (ImGui::RadioButton("Normal", m_RenderMode == TerrainRenderMode::NORMAL))
 			m_RenderMode = TerrainRenderMode::NORMAL;
 
-		ImGui::RadioButton("Terrain texture 1", &m_RandomizationMode, 0);
+
+		if (ImGui::RadioButton("NONE", m_RandomizationMode == TerrainRandomizationMode::NONE))
+			m_RandomizationMode = TerrainRandomizationMode::NONE;
 		ImGui::SameLine();
-		ImGui::RadioButton("Terrain texture 2", &m_RandomizationMode, 1);
+		if (ImGui::RadioButton("Rotate", m_RandomizationMode == TerrainRandomizationMode::ROTATE))
+			m_RandomizationMode = TerrainRandomizationMode::ROTATE;
 		ImGui::SameLine();
-		ImGui::RadioButton("Terrain texture 3", &m_RandomizationMode, 2);
+		if (ImGui::RadioButton("Voronoi", m_RandomizationMode == TerrainRandomizationMode::VORONOI))
+			m_RandomizationMode = TerrainRandomizationMode::VORONOI;
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Offset", m_RandomizationMode == TerrainRandomizationMode::OFFSET))
+			m_RandomizationMode = TerrainRandomizationMode::OFFSET;
 	}
 }
 

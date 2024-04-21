@@ -18,7 +18,7 @@ void GenerateLine(int index)
     gl_Position = gl_in[index].gl_Position;
     EmitVertex();
     gl_Position = (gl_in[index].gl_Position + 
-                                vec4(SurfaceNormal[index], 0.0) * MAGNITUDE);
+                                projection * view * vec4(SurfaceNormal[index], 0.0) * MAGNITUDE);
     EmitVertex();
     EndPrimitive();
 }
