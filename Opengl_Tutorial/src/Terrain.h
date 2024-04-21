@@ -4,6 +4,8 @@
 #include "Texture.h"
 #include <glm/matrix.hpp>
 
+enum class TerrainRenderMode { DEFAULT, WIREFRAME, NORMAL };
+
 class Terrain
 {
 private:
@@ -12,8 +14,8 @@ private:
 	unsigned int m_VAO, m_VBO, m_EBO, m_Normal;
 	unsigned int m_NumStrips;
 	unsigned int m_NumVertsPerStrip;
-	bool m_Wireframe = false;
-	int m_RandomizaionMode = 0;
+	TerrainRenderMode m_RenderMode = TerrainRenderMode::DEFAULT;
+	int m_RandomizationMode = 0;
 	Texture m_Heightmap, m_Texture, m_Normalmap, m_MountainTexture, m_MountainNormalmap;
 	glm::mat4 m_ModelMatrix;
 public:

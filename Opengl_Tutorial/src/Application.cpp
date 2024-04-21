@@ -256,7 +256,9 @@ int main()
 		//"res/textures/sand_muddy/TCom_Sand_Muddy2_2x2_1K_normal.jpg"
 		"res/textures/GroundDirtRocky020/GroundDirtRocky020_COL_2K.jpg",
 		"res/textures/GroundDirtRocky020/GroundDirtRocky020_NRM_2K.jpg",
-		"res/textures/gray_rocks/gray_rocks_diff_4k.jpg",
+		//"res/textures/gray_rocks/gray_rocks_diff_4k.jpg",
+		//"res/textures/gray_rocks/gray_rocks_nor_gl_4k.jpg",
+		"res/textures/rock2.jpg",
 		"res/textures/gray_rocks/gray_rocks_nor_gl_4k.jpg",
 		glm::scale(
 			glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)),

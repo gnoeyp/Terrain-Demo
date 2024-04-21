@@ -27,6 +27,8 @@ layout (std140) uniform u_DirLight
 in vec2 TexCoord;
 in vec2 HeightCoord;
 in vec3 FragPos;
+in vec3 SurfaceNormal;
+in vec3 SurfaceTangent;
 
 float sum( vec3 v ) { return v.x+v.y+v.z; }
 
@@ -130,25 +132,8 @@ vec4 textureOffset( sampler2D samp, vec2 x )
 
 mat3 CalcTBN()
 {
-    float h = texture(u_Heightmap, HeightCoord).y * 64.0 - 16.0;
-    float left = texture(u_Heightmap, HeightCoord + vec2(-u_TexelSizeU, 0.0)).y * 64.0 - 16.0;
-    float right = texture(u_Heightmap, HeightCoord + vec2(u_TexelSizeU, 0.0)).y * 64.0 - 16.0;
-    float up = texture(u_Heightmap, HeightCoord + vec2(0.0, u_TexelSizeV)).y * 64.0 - 16.0;
-    float down = texture(u_Heightmap, HeightCoord + vec2(0.0, -u_TexelSizeV)).y * 64.0 - 16.0;
-
-    vec3 n0 = normalize(cross(vec3(1.0, h-left, 0), vec3(0, up-h, 1.0)));
-    vec3 n1 = normalize(cross(vec3(1.0, right-h, 0), vec3(0, up-h, 1.0)));
-    vec3 n2 = normalize(cross(vec3(0, h-down, 1.0), vec3(-1.0, left-h, 0)));
-    vec3 n3 = normalize(cross(vec3(1.0, down-h,-1.0), vec3(1.0, right-h, 0)));
-
-    mat3 model = mat3(u_Model);
-    vec3 normal = normalize(model * (n0 + n1 + n2 + n3));
-
-    vec3 tangent = normalize(model * vec3(2.0, right - left, 0.0));
-    vec3 bitangent = normalize(cross(normal, tangent));
-    tangent = normalize(cross(bitangent, normal));
-    mat3 TBN = mat3(tangent, bitangent, normal);
-    return TBN;
+	vec3 SurfaceBitangent = normalize(cross(SurfaceNormal, SurfaceTangent));
+	return mat3(SurfaceTangent, SurfaceBitangent, SurfaceNormal);
 }
 
 sampler2D GetTextureSampler(float height, float threshold)
@@ -182,6 +167,8 @@ vec4 GetTexture(sampler2D sampler)
 
 void main()
 {
+	float grassCoverage = 0.8;
+
 	vec4 texColor;
     vec3 normalMap;
 
@@ -199,6 +186,26 @@ void main()
 	vec3 ambientColor = ambientStrength * ambient;
 
     mat3 TBN = CalcTBN();
+//    vec3 planeNormal = vec3(TBN[2]);
+
+//    float cosV = abs(dot(planeNormal, vec3(0.0, 1.0, 0.0)));
+//	float tenPercentGrass = grassCoverage - grassCoverage*0.1;
+//	float blendingCoeff = pow((cosV - tenPercentGrass) / (grassCoverage * 0.1), 1.0);
+//
+//    if (cosV > grassCoverage)
+//    {
+//		texColor = lowTexture;
+//    }
+//    else if (cosV > tenPercentGrass)
+//    {
+//		texColor = mix(highTexture, lowTexture, blendingCoeff);
+//    }
+//    else
+//    {
+//		texColor = highTexture;
+//    }
+//
+
 	normalMap = normalMap * 2.0 - 1.0;
     vec3 normal = normalize(TBN * normalMap);
 

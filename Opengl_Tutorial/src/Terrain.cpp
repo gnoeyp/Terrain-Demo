@@ -105,8 +105,11 @@ Terrain::Terrain(
 
 void Terrain::Draw() const
 {
-	if (m_Wireframe)
+	if (m_RenderMode == TerrainRenderMode::WIREFRAME)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	Shader& shader = m_RenderMode == TerrainRenderMode::NORMAL ? *Shader::HEIGHTMAP_NORMAL : *Shader::HEIGHTMAP;
+
 	glBindVertexArray(m_VAO);
 
 	m_Heightmap.Bind(0);
@@ -120,18 +123,18 @@ void Terrain::Draw() const
 	model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
 	Camera& camera = Camera::GetInstance();
 
-	Shader::HEIGHTMAP->Bind();
-	Shader::HEIGHTMAP->SetMat4f("u_Model", model);
-	Shader::HEIGHTMAP->SetVec3f("u_ViewPos", camera.GetPosition());
-	Shader::HEIGHTMAP->SetVec3f("u_FogColor", 0.35f, 0.46f, 0.56f);
-	Shader::HEIGHTMAP->SetInt("u_Heightmap", 0);
-	Shader::HEIGHTMAP->SetInt("u_Texture", 1);
-	Shader::HEIGHTMAP->SetInt("u_NormalTexture", 2);
-	Shader::HEIGHTMAP->SetInt("u_MountainTexture", 3);
-	Shader::HEIGHTMAP->SetInt("u_MountainNormalTexture", 4);
-	Shader::HEIGHTMAP->SetInt("u_TextureMethodType", m_RandomizaionMode);
-	Shader::HEIGHTMAP->SetFloat("u_TexelSizeU", 1.0f / (float)m_Heightmap.GetWidth());
-	Shader::HEIGHTMAP->SetFloat("u_TexelSizeV", 1.0f / (float)m_Heightmap.GetHeight());
+	shader.Bind();
+	shader.SetMat4f("u_Model", model);
+	shader.SetVec3f("u_ViewPos", camera.GetPosition());
+	shader.SetVec3f("u_FogColor", 0.35f, 0.46f, 0.56f);
+	shader.SetInt("u_Heightmap", 0);
+	shader.SetInt("u_Texture", 1);
+	shader.SetInt("u_NormalTexture", 2);
+	shader.SetInt("u_MountainTexture", 3);
+	shader.SetInt("u_MountainNormalTexture", 4);
+	shader.SetInt("u_TextureMethodType", m_RandomizationMode);
+	shader.SetFloat("u_TexelSizeU", 1.0f / (float)m_Heightmap.GetWidth());
+	shader.SetFloat("u_TexelSizeV", 1.0f / (float)m_Heightmap.GetHeight());
 
 	glDrawArrays(GL_PATCHES, 0, NUM_PATCH_PTS * REZ * REZ);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -141,13 +144,20 @@ void Terrain::ImGuiRender()
 {
 	if (ImGui::CollapsingHeader("Terrain"))
 	{
-		ImGui::Checkbox("Wireframe", &m_Wireframe);
+		if (ImGui::RadioButton("Default", m_RenderMode == TerrainRenderMode::DEFAULT))
+			m_RenderMode = TerrainRenderMode::DEFAULT;
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Wireframe", m_RenderMode == TerrainRenderMode::WIREFRAME))
+			m_RenderMode = TerrainRenderMode::WIREFRAME;
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Normal", m_RenderMode == TerrainRenderMode::NORMAL))
+			m_RenderMode = TerrainRenderMode::NORMAL;
 
-		ImGui::RadioButton("Terrain texture 1", &m_RandomizaionMode, 0);
+		ImGui::RadioButton("Terrain texture 1", &m_RandomizationMode, 0);
 		ImGui::SameLine();
-		ImGui::RadioButton("Terrain texture 2", &m_RandomizaionMode, 1);
+		ImGui::RadioButton("Terrain texture 2", &m_RandomizationMode, 1);
 		ImGui::SameLine();
-		ImGui::RadioButton("Terrain texture 3", &m_RandomizaionMode, 2);
+		ImGui::RadioButton("Terrain texture 3", &m_RandomizationMode, 2);
 	}
 }
 

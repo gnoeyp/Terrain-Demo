@@ -11,6 +11,7 @@ Shader* Shader::HOUSE = nullptr;
 Shader* Shader::HEIGHTMAP = nullptr;
 Shader* Shader::FIRE = nullptr;
 Shader* Shader::SKYBOX = nullptr;
+Shader* Shader::HEIGHTMAP_NORMAL = nullptr;
 
 std::string Shader::ParseShader(const char* path) const
 {
@@ -26,9 +27,9 @@ std::string Shader::ParseShader(const char* path) const
 	return ss.str();
 }
 
-unsigned int Shader::CreateShader(const char* vertPath, const char* fragPath, const char* tcsPath, const char* tesPath) const
+unsigned int Shader::CreateShader(const char* vertPath, const char* fragPath, const char* tcsPath, const char* tesPath, const char* geomPath) const
 {
-	unsigned int vert, frag, tsc = 0, tes = 0;
+	unsigned int vert, frag, tsc = 0, tes = 0, geom = 0;
 	std::string vertSource = ParseShader(vertPath);
 	std::string fragSource = ParseShader(fragPath);
 	vert = CompileShader(GL_VERTEX_SHADER, vertSource);
@@ -46,6 +47,12 @@ unsigned int Shader::CreateShader(const char* vertPath, const char* fragPath, co
 		tes = CompileShader(GL_TESS_EVALUATION_SHADER, source);
 	}
 
+	if (geomPath != nullptr)
+	{
+		std::string source = ParseShader(geomPath);
+		geom = CompileShader(GL_GEOMETRY_SHADER, source);
+	}
+
 	unsigned int program = glCreateProgram();
 	glAttachShader(program, vert);
 	glAttachShader(program, frag);
@@ -53,11 +60,20 @@ unsigned int Shader::CreateShader(const char* vertPath, const char* fragPath, co
 		glAttachShader(program, tsc);
 	if (tes)
 		glAttachShader(program, tes);
+	if (geom)
+		glAttachShader(program, geom);
+
 	glLinkProgram(program);
 	glValidateProgram(program);
 
 	glDeleteShader(vert);
 	glDeleteShader(frag);
+	if (tsc)
+		glDeleteShader(tsc);
+	if (tes)
+		glDeleteShader(tes);
+	if (geom)
+		glDeleteShader(geom);
 
 	return program;
 }
@@ -122,9 +138,9 @@ void Shader::SetFloat(const char* name, float v) const
 	GLCall(glUniform1f(GetLocation(name), v));
 }
 
-Shader::Shader(const char* vertPath, const char* fragPath, const char* tcsPath, const char* tesPath)
+Shader::Shader(const char* vertPath, const char* fragPath, const char* tcsPath, const char* tesPath, const char* geomPath)
 {
-	m_ID = CreateShader(vertPath, fragPath, tcsPath, tesPath);
+	m_ID = CreateShader(vertPath, fragPath, tcsPath, tesPath, geomPath);
 }
 
 Shader::~Shader()

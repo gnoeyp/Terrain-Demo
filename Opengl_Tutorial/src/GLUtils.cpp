@@ -12,6 +12,7 @@ bool GLLogError(const char* function, const char* path, int line)
 	if ((error = glGetError()) != GL_NO_ERROR)
 	{
 		std::cout << "[OpenGL Error (" << error << ")] '" << function << "', " << path << ": " << line << std::endl;
+		std::cout << error << std::endl;
 		return false;
 	}
 	return true;

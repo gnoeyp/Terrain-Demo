@@ -508,6 +508,8 @@
     <None Include="res\shaders\heightmap.tesc" />
     <None Include="res\shaders\heightmap.tese" />
     <None Include="res\shaders\heightmap.vert" />
+    <None Include="res\shaders\heightmap_norm.frag" />
+    <None Include="res\shaders\heightmap_norm.geom" />
     <None Include="res\shaders\skybox.frag" />
     <None Include="res\shaders\skybox.vert" />
     <None Include="vendor\glm\doc\api\a00002.html" />

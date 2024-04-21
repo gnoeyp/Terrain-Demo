@@ -2325,6 +2325,8 @@
     <None Include="res\shaders\blur.frag" />
     <None Include="res\shaders\bloom.vert" />
     <None Include="res\shaders\bloom.frag" />
+    <None Include="res\shaders\heightmap_norm.geom" />
+    <None Include="res\shaders\heightmap_norm.frag" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="vendor\imgui\misc\debuggers\imgui.natvis" />
