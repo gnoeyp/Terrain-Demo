@@ -279,25 +279,7 @@ int main()
 
 	House house;
 
-	Wood wood1(
-		glm::scale(
-			glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 9.7f, 5.0f)),
-			glm::vec3(0.02f, 0.02f, 0.02f)
-		)
-	);
-
-	Wood wood2(
-		glm::rotate(
-			glm::rotate(
-				glm::scale(
-					glm::translate(glm::mat4(1.0f), glm::vec3(2.7f, 9.7f, 5.3f)),
-					glm::vec3(0.02f, 0.02f, 0.02f)
-				),
-				glm::radians(90.f), glm::vec3(0.0f, 1.0f, 0.0f)
-			),
-			glm::radians(-15.f), glm::vec3(1.0f, 0.0f, 0.0f)
-		)
-	);
+	Wood wood;
 
 	UniformBlock matrixUbo({ sizeof(glm::mat4), sizeof(glm::mat4) }, "u_Matrices");
 	UniformBlock dirLightUbo(
@@ -389,36 +371,7 @@ int main()
 		fire.ImGuiRender();
 		terrain.ImGuiRender();
 		house.ImGuiRender();
-
-		//house.SetModelMatrix(
-		//	glm::scale(
-		//		glm::translate(
-		//			glm::mat4(1.0f),
-		//			glm::vec3(0.0f, 10.0f + modelOffset, 0.0f)),
-		//		glm::vec3(1.0f, 1.0f, 1.0f)
-		//	));
-
-		//wood1.SetModelMatrix(
-		//	glm::scale(
-		//		glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 9.7f + modelOffset, 5.0f)),
-		//		glm::vec3(0.02f, 0.02f, 0.02f)
-		//	)
-		//);
-
-		//wood2.SetModelMatrix(
-		//	glm::rotate(
-		//		glm::rotate(
-		//			glm::scale(
-		//				glm::translate(glm::mat4(1.0f), glm::vec3(2.7f, 9.7f + modelOffset, 5.3f)),
-		//				glm::vec3(0.02f, 0.02f, 0.02f)
-		//			),
-		//			glm::radians(90.f), glm::vec3(0.0f, 1.0f, 0.0f)
-		//		),
-		//		glm::radians(-15.f), glm::vec3(1.0f, 0.0f, 0.0f)
-		//	)
-		//);
-
-
+		wood.ImGuiRender();
 
 		processInput(window);
 
@@ -447,8 +400,7 @@ int main()
 		lightSpaceMatrixUbo.SetData(0, &idMatrix[0][0]);
 
 		house.Draw(*Shader::HOUSE);
-		wood1.Draw();
-		wood2.Draw();
+		wood.Draw();
 
 		terrain.Draw();
 
@@ -493,8 +445,7 @@ int main()
 			Shader::HOUSE->SetInt("u_ShadowMap", 3);
 			Shader::HOUSE->SetInt("u_EnableShadow", 1);
 			house.Draw(*Shader::HOUSE);
-			wood1.Draw();
-			wood2.Draw();
+			wood.Draw();
 
 			Shader::HEIGHTMAP->Bind();
 			glActiveTexture(GL_TEXTURE0 + 5);

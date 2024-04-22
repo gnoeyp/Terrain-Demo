@@ -1,18 +1,47 @@
 #include "Wood.h"
+#include <glm/gtc/matrix_transform.hpp>
+#include <imgui.h>
 
-Wood::Wood(const glm::mat4& modelMatrix)
-	: m_Model("res/textures/low_obj_1500/low_obj_1500.obj"), m_ModelMatrix(modelMatrix)
+Wood::Wood()
 {
+	m_ModelMatrices[0] = glm::scale(
+		glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 9.7f, 5.0f)),
+		glm::vec3(0.02f, 0.02f, 0.02f)
+	);
+
+	m_ModelMatrices[1] = glm::rotate(
+		glm::rotate(
+			glm::scale(
+				glm::translate(glm::mat4(1.0f), glm::vec3(2.7f, 9.7f, 5.3f)),
+				glm::vec3(0.02f, 0.02f, 0.02f)
+			),
+			glm::radians(90.f), glm::vec3(0.0f, 1.0f, 0.0f)
+		),
+		glm::radians(-15.f), glm::vec3(1.0f, 0.0f, 0.0f)
+	);
 }
 
 void Wood::Draw() const
 {
-	Shader::HOUSE->Bind();
-	Shader::HOUSE->SetMat4f("u_Model", m_ModelMatrix);
-	m_Model.Draw(*Shader::HOUSE);
+	for (unsigned int i = 0; i < 2; i++)
+	{
+		glm::mat4 modelMatrix = m_ModelMatrices[i];
+		modelMatrix[3][0] += m_OffsetX;
+		modelMatrix[3][1] += m_OffsetY;
+		modelMatrix[3][2] += m_OffsetZ;
+		Shader::HOUSE->Bind();
+		Shader::HOUSE->SetMat4f("u_Model", modelMatrix);
+		m_Models[i].Draw(*Shader::HOUSE);
+	}
 }
 
-void Wood::SetModelMatrix(const glm::mat4& modelMatrix)
+void Wood::ImGuiRender()
 {
-	m_ModelMatrix = modelMatrix;
+	if (ImGui::CollapsingHeader("Wood"))
+	{
+		ImGui::SliderFloat("OffsetX", &m_OffsetX, -20.0f, 20.0f);
+		ImGui::SliderFloat("OffsetY", &m_OffsetY, -20.0f, 20.0f);
+		ImGui::SliderFloat("OffsetZ", &m_OffsetZ, -20.0f, 20.0f);
+	}
 }
+

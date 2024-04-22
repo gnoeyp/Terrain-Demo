@@ -113,6 +113,9 @@ void Fire::ImGuiRender()
 	{
 		ImGui::SliderFloat("Force", &m_Force, 0.0f, 0.1f);
 		ImGui::SliderInt("Number of generated particles", &m_ParticlesPerFrame, 0, 10);
+		ImGui::SliderFloat("Fire Offset X", &m_Position.x, -20.0f, 20.0f);
+		ImGui::SliderFloat("Fire Offset Y", &m_Position.y, -20.0f, 20.0f);
+		ImGui::SliderFloat("Fire Offset Z", &m_Position.z, -20.0f, 20.0f);
 	}
 }
 

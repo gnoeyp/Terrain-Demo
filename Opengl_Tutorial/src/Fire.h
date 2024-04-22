@@ -30,6 +30,7 @@ private:
 	int m_ParticlesPerFrame = 3;
 	const unsigned int m_MaxParticles = 1000;
 	float m_Force = 0.015f;
+	float m_OffsetX = 0.0f, m_OffsetY = 0.0f, m_OffsetZ = 0.0f;
 	// TODO: ∏Æ∆—≈‰∏µ
 	Fire& operator=(const Fire&);
 	Fire(const Fire&);
