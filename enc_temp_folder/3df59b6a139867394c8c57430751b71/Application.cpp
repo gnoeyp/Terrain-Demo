@@ -288,17 +288,23 @@ int main()
 		{ 0, sizeof(glm::mat4) },
 		{ sizeof(glm::mat4), sizeof(glm::mat4) }, "u_Matrices");
 	UniformBlock dirLightUbo(
+		// base alignment of vec3 is 16
 		{
-			0, // color
-			16, // direction
-			28, // ambient
-			32 // shininess
+			0,
+			16,
+			28,
+			32
 		},
+		//	16, // color
+		//	12, // direction
+		//	4, // ambient
+		//	4 // shininess 
+		//},
 		{
-			12, // color
-			12, // direction
-			4, // ambient
-			4 // shininess
+			12,
+			12,
+			4,
+			4
 		},
 		"u_DirLight"
 	);

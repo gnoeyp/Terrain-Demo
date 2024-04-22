@@ -21,6 +21,10 @@ layout (std140) uniform u_DirLight
 	vec3 lightDirection;
     float ambient;
     float shininess;
+
+//	vec3 ambient;
+//	vec3 diffuse;
+//	vec3 specular;
 };
 
 in vec2 TexCoord;

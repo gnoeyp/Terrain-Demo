@@ -8,11 +8,10 @@ in vec2 TexCoords;
 
 struct DirLight
 {
-	vec3 direction;
-
-	vec3 ambient;
-	vec3 diffuse;
-	vec3 specular;
+	vec3 lightColor;
+	vec3 lightDirection;
+	float ambient;
+	float shininess;
 };
 
 layout (std140) uniform u_DirLight
@@ -33,18 +32,17 @@ uniform vec3 u_ViewPos;
 
 void main()
 {
-	float ambientStrength = 0.1f;
-	vec3 ambientColor = ambientStrength * dirLight.ambient;
+	vec3 ambientColor = dirLight.ambient * dirLight.lightColor;
 
 	vec3 norm = normalize(Normal);
-	vec3 lightDir = normalize(-dirLight.direction);
+	vec3 lightDir = normalize(-dirLight.lightDirection);
 	float diff = max(dot(norm, lightDir), 0.0);
-	vec3 diffuseColor = dirLight.diffuse * diff * vec3(texture(texture_diffuse1, TexCoords));
+	vec3 diffuseColor = dirLight.lightColor * diff * vec3(texture(texture_diffuse1, TexCoords));
 
 	vec3 viewDir = normalize(u_ViewPos - FragPos);
 	vec3 reflectDir = reflect(-lightDir, norm);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0f);
-	vec3 specularColor = dirLight.specular * spec * vec3(texture(texture_specular1, TexCoords));
+	vec3 specularColor = dirLight.shininess * spec * vec3(texture(texture_specular1, TexCoords));
 
 	vec3 emissionColor = texture(texture_emission1, TexCoords).rgb;
 

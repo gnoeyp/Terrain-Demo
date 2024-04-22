@@ -1,20 +1,23 @@
 #include "GLUtils.h"
+#include "GLUtils.h"
 #include "UniformBlock.h"
 #include <GL/glew.h>
 
 
 unsigned int UniformBlock::s_BindingIndex = 0;
 
-UniformBlock::UniformBlock(const std::vector<unsigned int>& sizes, const std::string& name)
-	: m_Sizes(sizes), m_BindingIndex(s_BindingIndex), m_Name(name)
+UniformBlock::UniformBlock(
+	const std::vector<unsigned int>& begin,
+	const std::vector<unsigned int>& sizes,
+	const std::string& name)
+	: m_Begin(begin), m_Sizes(sizes), m_BindingIndex(s_BindingIndex), m_Name(name)
 {
+	ASSERT(m_Begin.size() == m_Sizes.size());
+
 	glGenBuffers(1, &m_ID);
 	glBindBuffer(GL_UNIFORM_BUFFER, m_ID);
 
-	unsigned int total = 0;
-	for (unsigned int size : sizes)
-		total += size;
-
+	int total = m_Begin[m_Begin.size() - 1] + m_Sizes[m_Sizes.size() - 1];
 	glBufferData(GL_UNIFORM_BUFFER, total, NULL, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
@@ -27,7 +30,7 @@ void UniformBlock::SetData(unsigned int index, const void* data)
 {
 	ASSERT(index < m_Sizes.size());
 	glBindBuffer(GL_UNIFORM_BUFFER, m_ID);
-	glBufferSubData(GL_UNIFORM_BUFFER, CalOffset(index), m_Sizes[index], data);
+	glBufferSubData(GL_UNIFORM_BUFFER, m_Begin[index], m_Sizes[index], data);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
@@ -41,12 +44,4 @@ void UniformBlock::BindShader(const Shader* shaderPtr) const
 {
 	unsigned int index = glGetUniformBlockIndex(shaderPtr->GetID(), m_Name.c_str());
 	glUniformBlockBinding(shaderPtr->GetID(), index, m_BindingIndex);
-}
-
-unsigned int UniformBlock::CalOffset(unsigned int index) const
-{
-	unsigned int result = 0;
-	for (unsigned int i = 0; i < index; i++)
-		result += m_Sizes[i];
-	return result;
 }

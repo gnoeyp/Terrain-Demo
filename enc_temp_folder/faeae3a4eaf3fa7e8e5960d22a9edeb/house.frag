@@ -8,6 +8,14 @@ in vec3 Normal;
 in vec2 TexCoords;
 in vec4 FragPosLightSpace;
 
+struct DirLight
+{
+	vec3 lightColor;
+	vec3 lightDirection;
+	float ambient;
+	float shininess;
+};
+
 layout (std140) uniform u_DirLight
 {
 	vec3 lightColor;
