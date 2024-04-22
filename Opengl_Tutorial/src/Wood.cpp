@@ -11,3 +11,8 @@ void Wood::Draw() const
 	Shader::HOUSE->SetMat4f("u_Model", m_ModelMatrix);
 	m_Model.Draw(*Shader::HOUSE);
 }
+
+void Wood::SetModelMatrix(const glm::mat4& modelMatrix)
+{
+	m_ModelMatrix = modelMatrix;
+}

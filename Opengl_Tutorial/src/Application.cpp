@@ -271,18 +271,16 @@ int main()
 		)
 	);
 
-	House house(
-		glm::scale(
-			//glm::mat4(1.0f),
-			glm::translate(
-				glm::mat4(1.0f),
-				glm::vec3(0.0f, 10.0f, 0.0f)),
-			glm::vec3(1.0f, 1.0f, 1.0f)
-		));
+	float houseOffsetX = 0.0f;
+	float houseOffsetY = 0.0f;
+
+	float woodOffsetX = 0.0f;
+	float woodOffsetY = 0.0f;
+
+	House house;
 
 	Wood wood1(
 		glm::scale(
-			//glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 0.0f, 5.0f)),
 			glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 9.7f, 5.0f)),
 			glm::vec3(0.02f, 0.02f, 0.02f)
 		)
@@ -390,6 +388,37 @@ int main()
 
 		fire.ImGuiRender();
 		terrain.ImGuiRender();
+		house.ImGuiRender();
+
+		//house.SetModelMatrix(
+		//	glm::scale(
+		//		glm::translate(
+		//			glm::mat4(1.0f),
+		//			glm::vec3(0.0f, 10.0f + modelOffset, 0.0f)),
+		//		glm::vec3(1.0f, 1.0f, 1.0f)
+		//	));
+
+		//wood1.SetModelMatrix(
+		//	glm::scale(
+		//		glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 9.7f + modelOffset, 5.0f)),
+		//		glm::vec3(0.02f, 0.02f, 0.02f)
+		//	)
+		//);
+
+		//wood2.SetModelMatrix(
+		//	glm::rotate(
+		//		glm::rotate(
+		//			glm::scale(
+		//				glm::translate(glm::mat4(1.0f), glm::vec3(2.7f, 9.7f + modelOffset, 5.3f)),
+		//				glm::vec3(0.02f, 0.02f, 0.02f)
+		//			),
+		//			glm::radians(90.f), glm::vec3(0.0f, 1.0f, 0.0f)
+		//		),
+		//		glm::radians(-15.f), glm::vec3(1.0f, 0.0f, 0.0f)
+		//	)
+		//);
+
+
 
 		processInput(window);
 
