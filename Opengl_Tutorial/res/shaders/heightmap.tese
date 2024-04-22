@@ -9,6 +9,11 @@ layout (std140) uniform u_Matrices
     mat4 view;
 };
 
+layout (std140) uniform u_LightSpaceMatrix
+{
+    mat4 lightSpaceMatrix;
+};
+
 uniform mat4 u_Model = mat4(1.0);
 uniform float u_TexelSizeU;
 uniform float u_TexelSizeV;
@@ -21,6 +26,7 @@ out vec3 FragPos;
 out vec2 HeightCoord;
 out vec3 SurfaceNormal;
 out vec3 SurfaceTangent;
+out vec4 FragPosLightSpace;
 
 vec4 CalcPosition(float u, float v)
 {
@@ -102,4 +108,5 @@ void main()
 
     gl_Position = projection * view * u_Model * pCenter;
     FragPos = vec3(u_Model * pCenter);
+    FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0);
 }

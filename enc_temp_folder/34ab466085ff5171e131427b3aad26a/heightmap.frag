@@ -233,10 +233,19 @@ void main()
 	float visibility = 1.0;
 	visibility = max(min((fogEnd - distance) / (fogEnd - fogStart), 1.0), 0.0);
 
+//	vec3 projCoords = FragPosLightSpace.xyz / FragPosLightSpace.w;
+//    projCoords = projCoords * 0.5 + 0.5;
+//
+//    float v = FragPosLightSpace.x == 0.0 ? 1.0 : 0.0;
+//    FragColor = vec4(v, v, v, 1.0);
+//
     float shadow = ShadowCalculation(FragPosLightSpace);
+//    FragColor = vec4(shadow, shadow, shadow, 1.0);
 
     vec4 color = vec4((ambientColor + (1.0 - shadow) * diffuse * diff) * vec3(texColor), 1.0);
+//
 	vec4 foggedColor = mix(fogColor, color, visibility);
+//
     FragColor = foggedColor;
     BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
 

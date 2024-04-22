@@ -21,8 +21,8 @@
 #include <random>
 #include <stb_image.h>
 
-unsigned int windowWidth = 1280;
-unsigned int windowHeight = 760;
+unsigned int windowWidth = 1024;
+unsigned int windowHeight = 1024;
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
@@ -40,6 +40,11 @@ unsigned int textureColorbuffers[2];
 unsigned int quadVAO = 0, quadVBO;
 
 void InitFramebuffers();
+
+void ConfigureShaderAndMatrices()
+{
+
+}
 
 void renderQuad(unsigned int& vao, unsigned int& vbo)
 {
@@ -268,6 +273,7 @@ int main()
 
 	House house(
 		glm::scale(
+			//glm::mat4(1.0f),
 			glm::translate(
 				glm::mat4(1.0f),
 				glm::vec3(0.0f, 10.0f, 0.0f)),
@@ -276,6 +282,7 @@ int main()
 
 	Wood wood1(
 		glm::scale(
+			//glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 0.0f, 5.0f)),
 			glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 9.7f, 5.0f)),
 			glm::vec3(0.02f, 0.02f, 0.02f)
 		)
@@ -294,13 +301,13 @@ int main()
 		)
 	);
 
-	std::vector<unsigned int> sizes = { sizeof(glm::mat4), sizeof(glm::mat4) };
 	UniformBlock matrixUbo({ sizeof(glm::mat4), sizeof(glm::mat4) }, "u_Matrices");
 	UniformBlock dirLightUbo(
 		// base alignment of vec3 is 16
 		{ 16, 16, 16, 16 },
 		"u_DirLight"
 	);
+	UniformBlock lightSpaceMatrixUbo({ sizeof(glm::mat4) }, "u_LightSpaceMatrix");
 
 	matrixUbo.BindShader(Shader::HEIGHTMAP);
 	matrixUbo.BindShader(Shader::BASIC);
@@ -309,6 +316,8 @@ int main()
 
 	dirLightUbo.BindShader(Shader::HOUSE);
 	dirLightUbo.BindShader(Shader::HEIGHTMAP);
+
+	lightSpaceMatrixUbo.BindShader(Shader::HEIGHTMAP);
 
 
 	// Instancing
@@ -325,6 +334,40 @@ int main()
 
 	quat qRot = quat(1.0f, 0.0f, 0.0f, 0.0f);
 	vec3 dir;
+
+	unsigned int depthMapFBO;
+	glGenFramebuffers(1, &depthMapFBO);
+
+	const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+
+	unsigned int depthMap;
+	glGenTextures(1, &depthMap);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	float near_plane = 0.0f, far_plane = 20.0f;
+	glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+
+	glm::mat4 lightView = glm::lookAt(
+		glm::vec3(2.0f, 22.0f, 8.0f),
+		glm::vec3(0.0f, 12.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f)
+	);
+
+	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
+
+	Shader debugDepthShader("res/shaders/debugDepth.vert", "res/shaders/debugDepth.frag");
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -352,16 +395,48 @@ int main()
 
 		processInput(window);
 
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+
+		matrixUbo.SetData(0, &lightProjection[0][0]);
+		matrixUbo.SetData(1, &lightView[0][0]);
+		dirLightUbo.SetData(0, &lightDirection[0]);
+		dirLightUbo.SetData(1, &ambient[0]);
+		dirLightUbo.SetData(2, &diffuse[0]);
+		dirLightUbo.SetData(3, &specular[0]);
+		glm::mat4 idMatrix = glm::mat4(1.0f);
+		lightSpaceMatrixUbo.SetData(0, &idMatrix[0][0]);
+
+		house.Draw(*Shader::HOUSE);
+		wood1.Draw();
+		wood2.Draw();
+
+		terrain.Draw();
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		glViewport(0, 0, windowWidth, windowHeight);
+
+		//debugDepthShader.Bind();
+		//debugDepthShader.SetInt("depthMap", 0);
+		//debugDepthShader.SetFloat("near_plane", near_plane);
+		//debugDepthShader.SetInt("far_plane", far_plane);
+		//glActiveTexture(GL_TEXTURE0);
+		//glBindTexture(GL_TEXTURE_2D, depthMap);
+		//renderQuad(quadVAO, quadVBO);
+
 
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		Shader::HOUSE->Bind();
-
 		glm::mat4 projection = glm::perspective(glm::radians(camera.GetZoom()), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
 		glm::mat4 view = camera.GetViewMatrix();
+
 		matrixUbo.SetData(0, &projection[0][0]);
 		matrixUbo.SetData(1, &view[0][0]);
 
@@ -370,9 +445,18 @@ int main()
 		dirLightUbo.SetData(2, &diffuse[0]);
 		dirLightUbo.SetData(3, &specular[0]);
 
-		house.Draw();
+		lightSpaceMatrixUbo.SetData(0, &lightSpaceMatrix[0][0]);
+
+
+		house.Draw(*Shader::HOUSE);
 		wood1.Draw();
 		wood2.Draw();
+
+		Shader::HEIGHTMAP->Bind();
+		glActiveTexture(GL_TEXTURE0 + 5);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+		Shader::HEIGHTMAP->SetInt("u_ShadowMap", 5);
+		Shader::HEIGHTMAP->SetInt("u_EnableShadow", 1);
 		terrain.Draw();
 		cubeMap.Draw();
 		fire.Draw();

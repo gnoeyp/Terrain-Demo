@@ -498,6 +498,8 @@
     <None Include="res\shaders\bloom.vert" />
     <None Include="res\shaders\blur.frag" />
     <None Include="res\shaders\blur.vert" />
+    <None Include="res\shaders\debugDepth.frag" />
+    <None Include="res\shaders\debugDepth.vert" />
     <None Include="res\shaders\house.frag" />
     <None Include="res\shaders\house.vert" />
     <None Include="res\shaders\basic.frag" />
