@@ -347,8 +347,10 @@ int main()
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
@@ -356,16 +358,8 @@ int main()
 	glReadBuffer(GL_NONE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	float near_plane = 0.0f, far_plane = 20.0f;
-	glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-
-	glm::mat4 lightView = glm::lookAt(
-		glm::vec3(2.0f, 22.0f, 8.0f),
-		glm::vec3(0.0f, 12.0f, 0.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f)
-	);
-
-	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
+	float near_plane = 0.0f, far_plane = 100.0f;
+	glm::mat4 lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near_plane, far_plane);
 
 	Shader debugDepthShader("res/shaders/debugDepth.vert", "res/shaders/debugDepth.frag");
 
@@ -388,7 +382,7 @@ int main()
 		ImGui::ColorEdit3("Specular", &specular[0]);
 		ImGui::Text("Light Direction");
 		if (ImGui::gizmo3D("", dir))
-			lightDirection = glm::vec3(dir.x, dir.y, dir.z);
+			lightDirection = glm::normalize(glm::vec3(dir.x, dir.y, dir.z));
 
 		fire.ImGuiRender();
 		terrain.ImGuiRender();
@@ -402,6 +396,13 @@ int main()
 		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 		glClear(GL_DEPTH_BUFFER_BIT);
 
+		glm::mat4 lightView = glm::lookAt(
+			camera.GetPosition() - 10.0f * lightDirection,
+			camera.GetPosition(),
+			glm::vec3(0.0f, 1.0f, 0.0f)
+		);
+
+		glm::mat4 lightSpaceMatrix = lightProjection * lightView;
 
 		matrixUbo.SetData(0, &lightProjection[0][0]);
 		matrixUbo.SetData(1, &lightView[0][0]);

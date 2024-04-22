@@ -173,10 +173,10 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 	if (u_EnableShadow == 0) return 0.0;
 	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     projCoords = projCoords * 0.5 + 0.5;
+    if (projCoords.z >= 1.0) return 0.0;
     float closestDepth = texture(u_ShadowMap, projCoords.xy).r;
     float currentDepth = projCoords.z;
     return currentDepth > closestDepth ? 1.0 : 0.0;
-//    return currentDepth == closestDepth ? 1.0 : 0.0;
 }
 
 void main()
