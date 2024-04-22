@@ -24,6 +24,7 @@ void House::Draw(const Shader& shader) const
 	modelMatrix[3][2] += m_OffsetZ;
 	shader.Bind();
 	shader.SetMat4f("u_Model", modelMatrix);
+	shader.SetMat4f("u_NormalModel", glm::transpose(glm::inverse(modelMatrix)));
 	shader.SetVec3f("u_ViewPos", Camera::GetInstance().GetPosition());
 	m_Model.Draw(shader);
 }

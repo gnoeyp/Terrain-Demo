@@ -15,11 +15,12 @@ layout (std140) uniform u_Matrices
 };
 
 uniform mat4 u_Model = mat4(1.0);
+uniform mat4 u_NormalModel;
 
 void main()
 {
 	FragPos = vec3(u_Model * vec4(aPos, 1.0));
-	Normal = mat3(transpose(inverse(u_Model))) * aNormal;
+	Normal = mat3(u_NormalModel) * aNormal;
 	TexCoords = aTexCoords;
 	gl_Position = projection * view * u_Model * vec4(aPos,  1.0);
 }
