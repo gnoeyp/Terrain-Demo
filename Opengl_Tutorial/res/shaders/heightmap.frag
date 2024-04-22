@@ -175,7 +175,7 @@ float CalcShadow(vec4 fragPosLightSpace)
     float closestDepth = texture(u_ShadowMap, projCoords.xy).r;
     float currentDepth = projCoords.z;
 
-    float bias = max(0.005 * (1.0 - dot(SurfaceNormal, normalize(direction))), 0.00005);
+    float bias = max(0.005 * (1.0 - dot(SurfaceNormal, normalize(-direction))), 0.00005);
 
     float shadow = 0.0;
     vec2 texelSize = 1.0 / textureSize(u_ShadowMap, 0);
@@ -237,9 +237,17 @@ void main()
 	normalMap = normalMap * 2.0 - 1.0;
     vec3 normal = normalize(TBN * normalMap);
 
-    vec3 lightDir = normalize(direction);
+    // diffuse
+    vec3 lightDir = normalize(-direction);
 	float diff = max(dot(normal, lightDir), 0.0);
 
+    // specular
+//	vec3 viewDir = normalize(u_ViewPos - FragPos);
+//	vec3 halfwayDir = normalize(lightDir + viewDir);
+//	float spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0f);
+//	vec3 specularColor = specular * spec;
+//
+    // fog
 	float fogStart = 10.0f;
 	float fogEnd = 500.0f;
 	vec4 fogColor = vec4(u_FogColor, 1.0);

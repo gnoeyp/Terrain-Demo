@@ -96,10 +96,10 @@ void main()
     vec4 p2 = CalcPosition(u, v - u_TexelSizeV);
     vec4 p3 = CalcPosition(u, v + u_TexelSizeV);
 
-    vec3 n0 = normalize(cross(vec3(pCenter - p0), vec3(p3 - pCenter)));
-    vec3 n1 = normalize(cross(vec3(p1 - pCenter), vec3(p3 - pCenter)));
-    vec3 n2 = normalize(cross(vec3(pCenter - p2), vec3(p0 - pCenter)));
-    vec3 n3 = normalize(cross(vec3(p2 - pCenter), vec3(p1 - pCenter)));
+    vec3 n0 = normalize(-cross(vec3(pCenter - p0), vec3(p3 - pCenter)));
+    vec3 n1 = normalize(-cross(vec3(p1 - pCenter), vec3(p3 - pCenter)));
+    vec3 n2 = normalize(-cross(vec3(pCenter - p2), vec3(p0 - pCenter)));
+    vec3 n3 = normalize(-cross(vec3(p2 - pCenter), vec3(p1 - pCenter)));
 
     SurfaceNormal = normalize(mat3(u_Model) * (n0 + n1 + n2 + n3));
     vec3 tangent = normalize(mat3(u_Model) * vec3(p1 - p0));

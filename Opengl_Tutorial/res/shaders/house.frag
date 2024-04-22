@@ -73,9 +73,11 @@ void main()
 
 	vec3 diffuseColor = dirLight.diffuse * diff * vec3(texture(texture_diffuse1, TexCoords));
 
+	// specular
 	vec3 viewDir = normalize(u_ViewPos - FragPos);
-	vec3 reflectDir = reflect(-lightDir, norm);
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0f);
+	vec3 reflectDir = reflect(dirLight.direction, norm);
+	vec3 halfwayDir = normalize(lightDir + viewDir);
+	float spec = pow(max(dot(norm, halfwayDir), 0.0), 32.0f);
 	vec3 specularColor = dirLight.specular * spec * vec3(texture(texture_specular1, TexCoords));
 
 	vec3 emissionColor = texture(texture_emission1, TexCoords).rgb;
