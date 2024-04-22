@@ -168,7 +168,7 @@ vec4 GetTexture(sampler2D sampler)
     }
 }
 
-float ShadowCalculation(vec4 fragPosLightSpace)
+float CalcShadow(vec4 fragPosLightSpace)
 {
 	if (u_EnableShadow == 0) return 0.0;
 	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
@@ -179,7 +179,19 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 
     float bias = max(0.005 * (1.0 - dot(SurfaceNormal, normalize(direction))), 0.00005);
 
-    return currentDepth - bias > closestDepth ? 1.0 : 0.0;
+    float shadow = 0.0;
+    vec2 texelSize = 1.0 / textureSize(u_ShadowMap, 0);
+    for (int x = -1; x <= 1; ++x)
+    {
+        for (int y = -1; y <= 1; ++y)
+        {
+            float pcfDepth = texture(u_ShadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+            shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
+        }
+    }
+
+    shadow /= 9.0;
+    return shadow;
 }
 
 void main()
@@ -236,7 +248,7 @@ void main()
 	float visibility = 1.0;
 	visibility = max(min((fogEnd - distance) / (fogEnd - fogStart), 1.0), 0.0);
 
-    float shadow = ShadowCalculation(FragPosLightSpace);
+    float shadow = CalcShadow(FragPosLightSpace);
 
     vec4 color = vec4((ambientColor + (1.0 - shadow) * diffuse * diff) * vec3(texColor), 1.0);
 	vec4 foggedColor = mix(fogColor, color, visibility);
