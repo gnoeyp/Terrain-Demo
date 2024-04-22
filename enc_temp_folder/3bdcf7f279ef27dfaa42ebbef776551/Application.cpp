@@ -415,7 +415,7 @@ int main()
 		house.Draw(*Shader::HOUSE);
 		wood.Draw();
 
-		terrain.Draw();
+		//terrain.Draw();
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
