@@ -476,7 +476,7 @@ int main()
 			bool horizontal = true;
 			shaderBlur.Bind();
 
-			for (unsigned int i = 0; i < 100; i++)
+			for (unsigned int i = 0; i < 10; i++)
 			{
 				glBindFramebuffer(GL_FRAMEBUFFER, bloomFramebuffers[horizontal]);
 				glActiveTexture(GL_TEXTURE0);
