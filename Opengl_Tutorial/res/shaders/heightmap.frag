@@ -23,12 +23,15 @@ layout (std140) uniform u_DirLight
     float shininess;
 };
 
-in vec2 TexCoord;
-in vec2 HeightCoord;
-in vec3 FragPos;
-in vec3 SurfaceNormal;
-in vec3 SurfaceTangent;
-in vec4 FragPosLightSpace;
+in TE_OUT
+{
+	vec3 FragPos;
+	vec2 TexCoord;
+	vec2 HeightCoord;
+	vec3 SurfaceNormal;
+	vec3 SurfaceTangent;
+	vec4 FragPosLightSpace;
+} fs_in;
 
 float sum( vec3 v ) { return v.x+v.y+v.z; }
 
@@ -132,8 +135,8 @@ vec4 textureOffset( sampler2D samp, vec2 x )
 
 mat3 CalcTBN()
 {
-	vec3 SurfaceBitangent = normalize(cross(SurfaceNormal, SurfaceTangent));
-	return mat3(SurfaceTangent, SurfaceBitangent, SurfaceNormal);
+	vec3 SurfaceBitangent = normalize(cross(fs_in.SurfaceNormal, fs_in.SurfaceTangent));
+	return mat3(fs_in.SurfaceTangent, SurfaceBitangent, fs_in.SurfaceNormal);
 }
 
 sampler2D GetTextureSampler(float height, float threshold)
@@ -155,13 +158,13 @@ vec4 GetTexture(sampler2D sampler)
     switch(u_TextureMethodType)
     {
     case 0:
-		return texture(sampler, TexCoord);
+		return texture(sampler, fs_in.TexCoord);
     case 1:
-		return textureRotation(sampler, TexCoord);
+		return textureRotation(sampler, fs_in.TexCoord);
     case 2:
-		return textureVoronoi(sampler, TexCoord);
+		return textureVoronoi(sampler, fs_in.TexCoord);
     case 3:
-		return textureOffset(sampler, TexCoord);
+		return textureOffset(sampler, fs_in.TexCoord);
     }
 }
 
@@ -174,7 +177,7 @@ float CalcShadow(vec4 fragPosLightSpace)
     float closestDepth = texture(u_ShadowMap, projCoords.xy).r;
     float currentDepth = projCoords.z;
 
-    float bias = max(0.005 * (1.0 - dot(SurfaceNormal, normalize(-lightDirection))), 0.00005);
+    float bias = max(0.005 * (1.0 - dot(fs_in.SurfaceNormal, normalize(-lightDirection))), 0.00005);
 
     float shadow = 0.0;
     vec2 texelSize = 1.0 / textureSize(u_ShadowMap, 0);
@@ -199,7 +202,7 @@ void main()
 	vec4 texColor;
     vec3 normalMap;
 
-    float height = texture(u_Heightmap, HeightCoord).y * 64.0 - 16.0;
+    float height = texture(u_Heightmap, fs_in.HeightCoord).y * 64.0 - 16.0;
 
     vec4 lowTexture = GetTexture(u_Texture);
     vec4 highTexture = GetTexture(u_MountainTexture);
@@ -247,11 +250,11 @@ void main()
 	float fogStart = 10.0f;
 	float fogEnd = 500.0f;
 	vec4 fogColor = vec4(u_FogColor, 1.0);
-	float distance = length(FragPos - u_ViewPos);
+	float distance = length(fs_in.FragPos - u_ViewPos);
 	float visibility = 1.0;
 	visibility = max(min((fogEnd - distance) / (fogEnd - fogStart), 1.0), 0.0);
 
-    float shadow = CalcShadow(FragPosLightSpace);
+    float shadow = CalcShadow(fs_in.FragPosLightSpace);
 
     vec4 color = vec4((ambient + (1.0 - shadow) * diff) * lightColor * vec3(texColor), 1.0);
 	vec4 foggedColor = mix(fogColor, color, visibility);

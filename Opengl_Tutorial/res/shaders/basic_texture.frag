@@ -2,9 +2,12 @@
 
 out vec4 color;
 
-in vec3 FragPos;
-in vec3 Normal;
-in vec2 TexCoords;
+in VS_OUT
+{
+	vec3 FragPos;
+	vec3 Normal;
+	vec2 TexCoords;
+} fs_in;
 
 struct DirLight
 {
@@ -34,17 +37,17 @@ void main()
 {
 	vec3 ambientColor = dirLight.ambient * dirLight.lightColor;
 
-	vec3 norm = normalize(Normal);
+	vec3 norm = normalize(fs_in.Normal);
 	vec3 lightDir = normalize(-dirLight.lightDirection);
 	float diff = max(dot(norm, lightDir), 0.0);
-	vec3 diffuseColor = dirLight.lightColor * diff * vec3(texture(texture_diffuse1, TexCoords));
+	vec3 diffuseColor = dirLight.lightColor * diff * vec3(texture(texture_diffuse1, fs_in.TexCoords));
 
-	vec3 viewDir = normalize(u_ViewPos - FragPos);
+	vec3 viewDir = normalize(u_ViewPos - fs_in.FragPos);
 	vec3 reflectDir = reflect(-lightDir, norm);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0f);
-	vec3 specularColor = dirLight.shininess * spec * vec3(texture(texture_specular1, TexCoords));
+	vec3 specularColor = dirLight.shininess * spec * vec3(texture(texture_specular1, fs_in.TexCoords));
 
-	vec3 emissionColor = texture(texture_emission1, TexCoords).rgb;
+	vec3 emissionColor = texture(texture_emission1, fs_in.TexCoords).rgb;
 
 	color = vec4(ambientColor + diffuseColor + specularColor + emissionColor, 1.0);
 }

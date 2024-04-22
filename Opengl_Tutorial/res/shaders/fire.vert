@@ -15,8 +15,11 @@ uniform mat4 u_Model;
 uniform vec3 u_CameraFront;
 uniform vec3 u_CameraUp;
 
-out vec4 fColor;
-out vec2 TexCoord;
+out VS_OUT
+{
+	vec4 Color;
+	vec2 TexCoord;
+} vs_out;
 
 void main()
 {
@@ -27,6 +30,6 @@ void main()
 	mat3 rot = transpose(mat3(x, y, z));
 
 	gl_Position = projection * view * u_Model * vec4(aPos + aOffset, 1.0);
-	fColor = aColor;
-	TexCoord = aTexCoord;
+	vs_out.Color = aColor;
+	vs_out.TexCoord = aTexCoord;
 }

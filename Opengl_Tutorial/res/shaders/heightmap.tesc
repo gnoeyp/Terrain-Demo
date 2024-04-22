@@ -10,16 +10,23 @@ layout (std140) uniform u_Matrices
 
 uniform mat4 u_Model = mat4(1.0);
 
-in vec2 TexCoord[];
-in vec2 HCoord[];
-out vec2 HeightmapCoord[];
-out vec2 TextureCoord[];
+in VS_OUT
+{
+	vec2 TexCoord;
+	vec2 HCoord;
+} tc_in[];
+
+out TC_OUT
+{
+	vec2 HeightmapCoord;
+	vec2 TextureCoord;
+} tc_out[];
 
 void main()
 {
     gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
-    HeightmapCoord[gl_InvocationID] = HCoord[gl_InvocationID];
-    TextureCoord[gl_InvocationID] = TexCoord[gl_InvocationID];
+    tc_out[gl_InvocationID].HeightmapCoord = tc_in[gl_InvocationID].HCoord;
+    tc_out[gl_InvocationID].TextureCoord = tc_in[gl_InvocationID].TexCoord;
 
     if(gl_InvocationID == 0)
     {

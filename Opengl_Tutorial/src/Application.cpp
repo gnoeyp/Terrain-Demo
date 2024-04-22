@@ -248,12 +248,8 @@ int main()
 
 	glm::vec3 lightDirection(-0.2f, -1.0f, -0.3f);
 	glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
-	float ambient = 0.5f;
+	float ambient = 0.2f;
 	float shininess = 0.5f;
-	//glm::vec3 lightPos(0.0f, 50.0f, 0.0f);
-	//glm::vec3 ambient(0.5f, 0.5f, 0.5f);
-	//glm::vec3 diffuse(0.5f, 0.5f, 0.5f);
-	//glm::vec3 specular(1.0f, 1.0f, 1.0f);
 
 	//Ground ground;
 	Terrain terrain(
@@ -381,11 +377,8 @@ int main()
 		ImGui::NewFrame();
 		ImGui::Text("FPS: %d", fps);
 		ImGui::ColorEdit3("Color", &lightColor[0]);
-		ImGui::SliderFloat("Ambient", &ambient, 0.0f, 10.0f);
+		ImGui::SliderFloat("Ambient", &ambient, 0.0f, 1.0f);
 		ImGui::SliderFloat("Shininess", &shininess, 0.0f, 10.0f);
-		//ImGui::ColorEdit3("Ambient", &ambient[0]);
-		//ImGui::ColorEdit3("Diffuse", &diffuse[0]);
-		//ImGui::ColorEdit3("Specular", &specular[0]);
 		ImGui::Text("Light Direction");
 		if (ImGui::gizmo3D("", dir))
 			lightDirection = glm::normalize(glm::vec3(dir.x, dir.y, dir.z));
@@ -421,7 +414,6 @@ int main()
 
 		glm::mat4 lightSpaceMatrix = lightProjection * lightView;
 
-		std::cout << ambient << std::endl;
 		matrixUbo.SetData(0, &lightProjection[0][0]);
 		matrixUbo.SetData(1, &lightView[0][0]);
 		dirLightUbo.SetData(0, &lightColor[0]);

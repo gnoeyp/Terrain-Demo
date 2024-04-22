@@ -18,22 +18,28 @@ uniform mat4 u_Model = mat4(1.0);
 uniform float u_TexelSizeU;
 uniform float u_TexelSizeV;
 
-in vec2 HeightmapCoord[];
-in vec2 TextureCoord[];
+in TC_OUT
+{
+	vec2 HeightmapCoord;
+	vec2 TextureCoord;
+} te_in[];
 
-out vec2 TexCoord;
-out vec3 FragPos;
-out vec2 HeightCoord;
-out vec3 SurfaceNormal;
-out vec3 SurfaceTangent;
-out vec4 FragPosLightSpace;
+out TE_OUT
+{
+	vec3 FragPos;
+    vec2 TexCoord;
+	vec2 HeightCoord;
+	vec3 SurfaceNormal;
+	vec3 SurfaceTangent;
+	vec4 FragPosLightSpace;
+} te_out;
 
 vec4 CalcPosition(float u, float v)
 {
-    vec2 h00 = HeightmapCoord[0];
-    vec2 h01 = HeightmapCoord[1];
-    vec2 h10 = HeightmapCoord[2];
-    vec2 h11 = HeightmapCoord[3];
+    vec2 h00 = te_in[0].HeightmapCoord;
+    vec2 h01 = te_in[1].HeightmapCoord;
+    vec2 h10 = te_in[2].HeightmapCoord;
+    vec2 h11 = te_in[3].HeightmapCoord;
 
     vec2 h0 = (h01 - h00) * u + h00;
     vec2 h1 = (h11 - h10) * u + h10;
@@ -60,26 +66,26 @@ void main()
     float u = gl_TessCoord.x;
     float v = gl_TessCoord.y;
 
-    vec2 h00 = HeightmapCoord[0];
-    vec2 h01 = HeightmapCoord[1];
-    vec2 h10 = HeightmapCoord[2];
-    vec2 h11 = HeightmapCoord[3];
+    vec2 h00 = te_in[0].HeightmapCoord;
+    vec2 h01 = te_in[1].HeightmapCoord;
+    vec2 h10 = te_in[2].HeightmapCoord;
+    vec2 h11 = te_in[3].HeightmapCoord;
 
     vec2 h0 = (h01 - h00) * u + h00;
     vec2 h1 = (h11 - h10) * u + h10;
     vec2 hCoord = (h1 - h0) * v + h0;
 
     float height = texture(u_HeightMap, hCoord).y * 64.0 - 16.0;
-    HeightCoord = hCoord;
+    te_out.HeightCoord = hCoord;
 
-    vec2 t00 = TextureCoord[0];
-    vec2 t01 = TextureCoord[1];
-    vec2 t10 = TextureCoord[2];
-    vec2 t11 = TextureCoord[3];
+    vec2 t00 = te_in[0].TextureCoord;
+    vec2 t01 = te_in[1].TextureCoord;
+    vec2 t10 = te_in[2].TextureCoord;
+    vec2 t11 = te_in[3].TextureCoord;
 
     vec2 t0 = (t01 - t00) * u + t00;
     vec2 t1 = (t11 - t10) * u + t10;
-    TexCoord = (t1 - t0) * v + t0;
+    te_out.TexCoord = (t1 - t0) * v + t0;
 
     vec4 p00 = gl_in[0].gl_Position;
     vec4 p01 = gl_in[1].gl_Position;
@@ -101,12 +107,12 @@ void main()
     vec3 n2 = normalize(-cross(vec3(pCenter - p2), vec3(p0 - pCenter)));
     vec3 n3 = normalize(-cross(vec3(p2 - pCenter), vec3(p1 - pCenter)));
 
-    SurfaceNormal = normalize(mat3(u_Model) * (n0 + n1 + n2 + n3));
+    te_out.SurfaceNormal = normalize(mat3(u_Model) * (n0 + n1 + n2 + n3));
     vec3 tangent = normalize(mat3(u_Model) * vec3(p1 - p0));
-    vec3 bitangent = normalize(cross(SurfaceNormal, tangent));
-    SurfaceTangent = normalize(cross(bitangent, SurfaceNormal));
+    vec3 bitangent = normalize(cross(te_out.SurfaceNormal, tangent));
+    te_out.SurfaceTangent = normalize(cross(bitangent, te_out.SurfaceNormal));
 
     gl_Position = projection * view * u_Model * pCenter;
-    FragPos = vec3(u_Model * pCenter);
-    FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0);
+    te_out.FragPos = vec3(u_Model * pCenter);
+    te_out.FragPosLightSpace = lightSpaceMatrix * vec4(te_out.FragPos, 1.0);
 }

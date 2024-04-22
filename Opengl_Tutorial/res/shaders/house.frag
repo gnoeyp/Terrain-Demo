@@ -3,10 +3,13 @@
 layout (location = 0) out vec4 FragColor;
 layout (location = 1) out vec4 BrightColor;
 
-in vec3 FragPos;
-in vec3 Normal;
-in vec2 TexCoords;
-in vec4 FragPosLightSpace;
+in VS_OUT
+{
+	vec3 FragPos;
+	vec3 Normal;
+	vec2 TexCoords;
+	vec4 FragPosLightSpace;
+} fs_in;
 
 layout (std140) uniform u_DirLight
 {
@@ -60,22 +63,22 @@ void main()
 {
 	vec3 ambientColor = ambient * lightColor;
 
-	vec3 norm = normalize(Normal);
+	vec3 norm = normalize(fs_in.Normal);
 	vec3 lightDir = normalize(-lightDirection);
 	float diff = max(dot(norm, lightDir), 0.0);
 
-	vec3 diffuseColor = lightColor * diff * vec3(texture(texture_diffuse1, TexCoords));
+	vec3 diffuseColor = lightColor * diff * vec3(texture(texture_diffuse1, fs_in.TexCoords));
 
 	// specular
-	vec3 viewDir = normalize(u_ViewPos - FragPos);
+	vec3 viewDir = normalize(u_ViewPos - fs_in.FragPos);
 	vec3 reflectDir = reflect(lightDirection, norm);
 	vec3 halfwayDir = normalize(lightDir + viewDir);
 	float spec = pow(max(dot(norm, halfwayDir), 0.0), 32.0f);
-	vec3 specularColor = shininess * spec * vec3(texture(texture_specular1, TexCoords));
+	vec3 specularColor = shininess * spec * vec3(texture(texture_specular1, fs_in.TexCoords));
 
-	vec3 emissionColor = texture(texture_emission1, TexCoords).rgb;
+	vec3 emissionColor = texture(texture_emission1, fs_in.TexCoords).rgb;
 
-	float shadow = CalcShadow(FragPosLightSpace);
+	float shadow = CalcShadow(fs_in.FragPosLightSpace);
 
 	FragColor = vec4(ambientColor + (1.0 - shadow) * (diffuseColor + specularColor + emissionColor), 1.0);
 
