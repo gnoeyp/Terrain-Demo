@@ -21,8 +21,8 @@
 #include <random>
 #include <stb_image.h>
 
-unsigned int windowWidth = 1024;
-unsigned int windowHeight = 1024;
+unsigned int windowWidth = 1280;
+unsigned int windowHeight = 720;
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
@@ -318,6 +318,7 @@ int main()
 	dirLightUbo.BindShader(Shader::HEIGHTMAP);
 
 	lightSpaceMatrixUbo.BindShader(Shader::HEIGHTMAP);
+	lightSpaceMatrixUbo.BindShader(Shader::HOUSE);
 
 
 	// Instancing
@@ -363,6 +364,8 @@ int main()
 
 	Shader debugDepthShader("res/shaders/debugDepth.vert", "res/shaders/debugDepth.frag");
 
+	bool showDepthBuffer = false;
+
 	while (!glfwWindowShouldClose(window))
 	{
 
@@ -383,6 +386,7 @@ int main()
 		ImGui::Text("Light Direction");
 		if (ImGui::gizmo3D("", dir))
 			lightDirection = glm::normalize(glm::vec3(dir.x, dir.y, dir.z));
+		ImGui::Checkbox("Depth buffer", &showDepthBuffer);
 
 		fire.ImGuiRender();
 		terrain.ImGuiRender();
@@ -423,75 +427,88 @@ int main()
 
 		glViewport(0, 0, windowWidth, windowHeight);
 
-		//debugDepthShader.Bind();
-		//debugDepthShader.SetInt("depthMap", 0);
-		//debugDepthShader.SetFloat("near_plane", near_plane);
-		//debugDepthShader.SetInt("far_plane", far_plane);
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, depthMap);
-		//renderQuad(quadVAO, quadVBO);
-
-
-		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		glm::mat4 projection = glm::perspective(glm::radians(camera.GetZoom()), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
-		glm::mat4 view = camera.GetViewMatrix();
-
-		matrixUbo.SetData(0, &projection[0][0]);
-		matrixUbo.SetData(1, &view[0][0]);
-
-		dirLightUbo.SetData(0, &lightDirection[0]);
-		dirLightUbo.SetData(1, &ambient[0]);
-		dirLightUbo.SetData(2, &diffuse[0]);
-		dirLightUbo.SetData(3, &specular[0]);
-
-		lightSpaceMatrixUbo.SetData(0, &lightSpaceMatrix[0][0]);
-
-		house.Draw(*Shader::HOUSE);
-		wood1.Draw();
-		wood2.Draw();
-
-		Shader::HEIGHTMAP->Bind();
-		glActiveTexture(GL_TEXTURE0 + 5);
-		glBindTexture(GL_TEXTURE_2D, depthMap);
-		Shader::HEIGHTMAP->SetInt("u_ShadowMap", 5);
-		Shader::HEIGHTMAP->SetInt("u_EnableShadow", 1);
-		terrain.Draw();
-		cubeMap.Draw();
-		fire.Draw();
-
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		// bloom
-
-		bool firstIteration = true;
-		bool horizontal = true;
-		shaderBlur.Bind();
-
-		for (unsigned int i = 0; i < 100; i++)
+		if (showDepthBuffer)
 		{
-			glBindFramebuffer(GL_FRAMEBUFFER, bloomFramebuffers[horizontal]);
+			debugDepthShader.Bind();
+			debugDepthShader.SetInt("depthMap", 0);
+			debugDepthShader.SetFloat("near_plane", near_plane);
+			debugDepthShader.SetInt("far_plane", far_plane);
 			glActiveTexture(GL_TEXTURE0);
-			shaderBlur.SetInt("u_Image", 0);
-			shaderBlur.SetInt("u_Horizontal", horizontal);
-			glBindTexture(GL_TEXTURE_2D, firstIteration ? sceneColorbuffers[1] : textureColorbuffers[!horizontal]);
+			glBindTexture(GL_TEXTURE_2D, depthMap);
 			renderQuad(quadVAO, quadVBO);
-			firstIteration = false;
-			horizontal = !horizontal;
 		}
+		else
+		{
 
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		shaderBloom.Bind();
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, sceneColorbuffers[0]);
-		shaderBloom.SetInt("u_Scene", 0);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, textureColorbuffers[!horizontal]);
-		shaderBloom.SetInt("u_BloomBlur", 1);
-		renderQuad(quadVAO, quadVBO);
+			glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			glm::mat4 projection = glm::perspective(glm::radians(camera.GetZoom()), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
+			glm::mat4 view = camera.GetViewMatrix();
+
+			matrixUbo.SetData(0, &projection[0][0]);
+			matrixUbo.SetData(1, &view[0][0]);
+
+			dirLightUbo.SetData(0, &lightDirection[0]);
+			dirLightUbo.SetData(1, &ambient[0]);
+			dirLightUbo.SetData(2, &diffuse[0]);
+			dirLightUbo.SetData(3, &specular[0]);
+
+			lightSpaceMatrixUbo.SetData(0, &lightSpaceMatrix[0][0]);
+
+			Shader::HOUSE->Bind();
+			glActiveTexture(GL_TEXTURE0 + 3);
+			glBindTexture(GL_TEXTURE_2D, depthMap);
+			Shader::HOUSE->SetInt("u_ShadowMap", 3);
+			Shader::HOUSE->SetInt("u_EnableShadow", 1);
+			house.Draw(*Shader::HOUSE);
+			wood1.Draw();
+			wood2.Draw();
+
+			Shader::HEIGHTMAP->Bind();
+			glActiveTexture(GL_TEXTURE0 + 5);
+			glBindTexture(GL_TEXTURE_2D, depthMap);
+			Shader::HEIGHTMAP->SetInt("u_ShadowMap", 5);
+			Shader::HEIGHTMAP->SetInt("u_EnableShadow", 1);
+			terrain.Draw();
+			cubeMap.Draw();
+			fire.Draw();
+
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			// bloom
+
+			bool firstIteration = true;
+			bool horizontal = true;
+			shaderBlur.Bind();
+
+			for (unsigned int i = 0; i < 100; i++)
+			{
+				glBindFramebuffer(GL_FRAMEBUFFER, bloomFramebuffers[horizontal]);
+				glActiveTexture(GL_TEXTURE0);
+				shaderBlur.SetInt("u_Image", 0);
+				shaderBlur.SetInt("u_Horizontal", horizontal);
+				glBindTexture(GL_TEXTURE_2D, firstIteration ? sceneColorbuffers[1] : textureColorbuffers[!horizontal]);
+				renderQuad(quadVAO, quadVBO);
+				firstIteration = false;
+				horizontal = !horizontal;
+			}
+
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			shaderBloom.Bind();
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, sceneColorbuffers[0]);
+			shaderBloom.SetInt("u_Scene", 0);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, textureColorbuffers[!horizontal]);
+			shaderBloom.SetInt("u_BloomBlur", 1);
+			renderQuad(quadVAO, quadVBO);
+
+		}
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

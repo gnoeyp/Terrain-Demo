@@ -7,11 +7,17 @@ layout(location = 2) in vec2 aTexCoords;
 out vec3 FragPos;
 out vec3 Normal;
 out vec2 TexCoords;
+out vec4 FragPosLightSpace;
 
 layout (std140) uniform u_Matrices
 {
     mat4 projection;
     mat4 view;
+};
+
+layout (std140) uniform u_LightSpaceMatrix
+{
+    mat4 lightSpaceMatrix;
 };
 
 uniform mat4 u_Model = mat4(1.0);
@@ -22,4 +28,5 @@ void main()
 	Normal = mat3(transpose(inverse(u_Model))) * aNormal;
 	TexCoords = aTexCoords;
 	gl_Position = projection * view * u_Model * vec4(aPos,  1.0);
+	FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0);
 }

@@ -11,8 +11,6 @@ uniform sampler2D u_MountainNormalTexture;
 uniform sampler2D u_ShadowMap;
 uniform int u_TextureMethodType = 0;
 uniform mat4 u_Model;
-uniform float u_TexelSizeU;
-uniform float u_TexelSizeV;
 uniform vec3 u_ViewPos;
 uniform vec3 u_FogColor;
 uniform int u_EnableShadow = 0;
