@@ -7,6 +7,7 @@ Wood::Wood(const glm::mat4& modelMatrix)
 
 void Wood::Draw() const
 {
+	Shader::HOUSE->Bind();
 	Shader::HOUSE->SetMat4f("u_Model", m_ModelMatrix);
 	m_Model.Draw(*Shader::HOUSE);
 }

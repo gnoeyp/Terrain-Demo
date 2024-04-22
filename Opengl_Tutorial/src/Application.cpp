@@ -448,7 +448,6 @@ int main()
 
 		lightSpaceMatrixUbo.SetData(0, &lightSpaceMatrix[0][0]);
 
-
 		house.Draw(*Shader::HOUSE);
 		wood1.Draw();
 		wood2.Draw();
