@@ -261,8 +261,8 @@ int main()
 		//"res/textures/gray_rocks/gray_rocks_nor_gl_4k.jpg",
 		"res/textures/grass/grass01.jpg",
 		"res/textures/GroundDirtRocky020/GroundDirtRocky020_NRM_2K.jpg",
-		"res/textures/rock2.jpg",
-		"res/textures/gray_rocks/gray_rocks_nor_gl_4k.jpg",
+		"res/textures/rdiffuse.jpg",
+		"res/textures/rnormal.jpg",
 		glm::scale(
 			glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)),
 			glm::vec3(1.0f, 1.0f, 1.0f)
@@ -446,7 +446,7 @@ int main()
 			glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			glm::mat4 projection = glm::perspective(glm::radians(camera.GetZoom()), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
+			glm::mat4 projection = glm::perspective(glm::radians(camera.GetZoom()), (float)windowWidth / (float)windowHeight, 0.1f, 3000.0f);
 			glm::mat4 view = camera.GetViewMatrix();
 
 			matrixUbo.SetData(0, &projection[0][0]);

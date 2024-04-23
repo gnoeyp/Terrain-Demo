@@ -16,6 +16,13 @@ uniform int u_EnableShadow = 0;
 uniform float u_TexelSizeU;
 uniform float u_TexelSizeV;
 
+uniform float u_GDispFactor;
+uniform float u_Power;
+uniform float u_Freq;
+uniform int u_Octaves;
+uniform float u_FogStart;
+uniform float u_FogEnd;
+
 layout (std140) uniform u_DirLight
 {
 	vec3 lightColor;
@@ -51,17 +58,10 @@ float InterpolatedNoise(int ind, float x, float y) {
 	float b = Random2D(randomInput + vec2(1.0, 0.0));
 	float c = Random2D(randomInput + vec2(0.0, 1.0));
 	float d = Random2D(randomInput + vec2(1.0, 1.0));
-	//float v1 = Random2D(randomInput);
-	//float v2 = Random2D(randomInput + vec2(1.0, 0.0));
-	//float v3 = Random2D(randomInput + vec2(0.0, 1.0));
-	//float v4 = Random2D(randomInput + vec2(1.0, 1.0));
 
 	vec2 w = vec2(fractional_X, fractional_Y);
 	w = w*w*w*(10.0 + w*(-15.0 + 6.0*w));
 
-	//fractional_X = smoothstep(0.0, 1.0, fractional_X);
-	//fractional_Y = smoothstep(0.0, 1.0, fractional_Y);
-	//return a + fractional_X*(b-a) + fractional_Y*c + fractional_X*fractional_Y*(d-c) - a*fractional_Y - fractional_X*fractional_Y*(b-a);
 	float k0 = a, 
 	k1 = b - a, 
 	k2 = c - a, 
@@ -71,28 +71,22 @@ float InterpolatedNoise(int ind, float x, float y) {
 }
 
 float perlin(vec2 st){
-	float gDispFactor = 20.0;
-    int octaves = 10;
-    float power = 3.0;
-    float freq = 0.01;
     const mat2 m = mat2(0.8,-0.6,0.6,0.8);
     
 	float persistence = 0.5;
 	float total = 0.0,
-		frequency = 0.05*freq,
-		amplitude = gDispFactor;
-	for (int i = 0; i < octaves; ++i) {
+		frequency = 0.05*u_Freq,
+		amplitude = u_GDispFactor;
+	for (int i = 0; i < u_Octaves; ++i) {
 		frequency *= 2.0;
 		amplitude *= persistence;
-
-        //st = frequency*m*st;
 
 		vec2 v = frequency*m*(st + 10.0f);
 
 		total += InterpolatedNoise(0, v.x, v.y) * amplitude;
 	}
 
-	return pow(total, power);
+	return pow(total, u_Power);
 }
 
 float sum( vec3 v ) { return v.x+v.y+v.z; }
@@ -215,18 +209,18 @@ sampler2D GetNormalTextureSampler(float height, float threshold)
     return u_NormalTexture;
 }
 
-vec4 GetTexture(sampler2D sampler)
+vec4 GetTexture(sampler2D sampler, vec2 coord)
 {
     switch(u_TextureMethodType)
     {
     case 0:
-		return texture(sampler, fs_in.TexCoord);
+		return texture(sampler, coord);
     case 1:
-		return textureRotation(sampler, fs_in.TexCoord);
+		return textureRotation(sampler, coord);
     case 2:
-		return textureVoronoi(sampler, fs_in.TexCoord);
+		return textureVoronoi(sampler, coord);
     case 3:
-		return textureOffset(sampler, fs_in.TexCoord);
+		return textureOffset(sampler, coord);
     }
 }
 
@@ -266,10 +260,10 @@ void main()
 
     float height = texture(u_Heightmap, fs_in.HeightCoord).y * 64.0 - 16.0;
 
-    vec4 lowTexture = GetTexture(u_Texture);
-    vec4 highTexture = GetTexture(u_MountainTexture);
-    vec3 lowNormal = vec3(GetTexture(u_NormalTexture));
-    vec3 highNormal = vec3(GetTexture(u_MountainNormalTexture));
+    vec4 lowTexture = GetTexture(u_Texture, fs_in.TexCoord * 100.0);
+    vec4 highTexture = GetTexture(u_MountainTexture, fs_in.TexCoord * 8.0);
+    vec3 lowNormal = vec3(GetTexture(u_NormalTexture, fs_in.TexCoord * 100.0));
+    vec3 highNormal = vec3(GetTexture(u_MountainNormalTexture, fs_in.TexCoord * 8.0));
 
     texColor = mix(lowTexture, highTexture, smoothstep(-3.0, 3.0, height - 15.0));
     normalMap = mix(lowNormal, highNormal, smoothstep(-3.0, 3.0, height - 15.0));
@@ -315,12 +309,10 @@ void main()
 //	vec3 specularColor = specular * spec;
 //
     // fog
-	float fogStart = 10.0f;
-	float fogEnd = 500.0f;
 	vec4 fogColor = vec4(u_FogColor, 1.0);
 	float distance = length(fs_in.FragPos - u_ViewPos);
 	float visibility = 1.0;
-	visibility = max(min((fogEnd - distance) / (fogEnd - fogStart), 1.0), 0.0);
+	visibility = max(min((u_FogEnd - distance) / (u_FogEnd - u_FogStart), 1.0), 0.0);
 
     float shadow = CalcShadow(fs_in.FragPosLightSpace, surfaceNormal);
 
@@ -328,8 +320,4 @@ void main()
 	vec4 foggedColor = mix(fogColor, color, visibility);
     FragColor = foggedColor;
     BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
-
-
-//	if (distance > 500.0)
-//		discard;
 }

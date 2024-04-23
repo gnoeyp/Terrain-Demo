@@ -30,8 +30,8 @@ Terrain::Terrain(
 	std::vector<float> normals, tangents, bitangents;
 	float yScale = 64.0f / 256.0f, yShift = 16.0f;
 
-	int width = m_Heightmap.GetWidth();
-	int height = m_Heightmap.GetHeight();
+	int width = 2000;
+	int height = 2000;
 
 	for (unsigned int i = 0; i < REZ; i++)
 	{
@@ -53,30 +53,29 @@ Terrain::Terrain(
 			positions.push_back(0.0f); // v.y
 			positions.push_back(-height / 2.0f + height * (j + 1) / (float)REZ); // v.z
 
-			heightmapCoords.push_back(i / (float)REZ); // u
-			heightmapCoords.push_back(j / (float)REZ); // v
+			//heightmapCoords.push_back(i / (float)REZ); // u
+			//heightmapCoords.push_back(j / (float)REZ); // v
 
-			heightmapCoords.push_back((i + 1) / (float)REZ); // u
-			heightmapCoords.push_back(j / (float)REZ); // v
+			//heightmapCoords.push_back((i + 1) / (float)REZ); // u
+			//heightmapCoords.push_back(j / (float)REZ); // v
 
-			heightmapCoords.push_back(i / (float)REZ); // u
-			heightmapCoords.push_back((j + 1) / (float)REZ); // v
+			//heightmapCoords.push_back(i / (float)REZ); // u
+			//heightmapCoords.push_back((j + 1) / (float)REZ); // v
 
-			heightmapCoords.push_back((i + 1) / (float)REZ); // u
-			heightmapCoords.push_back((j + 1) / (float)REZ); // v
+			//heightmapCoords.push_back((i + 1) / (float)REZ); // u
+			//heightmapCoords.push_back((j + 1) / (float)REZ); // v
 
+			textureCoords.push_back(i / (float)REZ);
+			textureCoords.push_back(j / (float)REZ);
 
-			textureCoords.push_back(i * width / (float)REZ);
-			textureCoords.push_back(j * height / (float)REZ);
+			textureCoords.push_back((i + 1) / (float)REZ);
+			textureCoords.push_back(j / (float)REZ);
 
-			textureCoords.push_back((i + 1) * width / (float)REZ);
-			textureCoords.push_back(j * height / (float)REZ);
+			textureCoords.push_back(i / (float)REZ);
+			textureCoords.push_back((j + 1) / (float)REZ);
 
-			textureCoords.push_back(i * width / (float)REZ);
-			textureCoords.push_back((j + 1) * height / (float)REZ);
-
-			textureCoords.push_back((i + 1) * width / (float)REZ);
-			textureCoords.push_back((j + 1) * height / (float)REZ);
+			textureCoords.push_back((i + 1) / (float)REZ);
+			textureCoords.push_back((j + 1) / (float)REZ);
 		}
 	}
 
@@ -86,19 +85,19 @@ Terrain::Terrain(
 
 	glGenBuffers(1, &m_VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-	glBufferData(GL_ARRAY_BUFFER, (positions.size() + heightmapCoords.size() + textureCoords.size()) * sizeof(float), NULL, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, (positions.size() + textureCoords.size()) * sizeof(float), NULL, GL_STATIC_DRAW);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, positions.size() * sizeof(float), &positions[0]);
-	glBufferSubData(GL_ARRAY_BUFFER, positions.size() * sizeof(float), heightmapCoords.size() * sizeof(float), &heightmapCoords[0]);
-	glBufferSubData(GL_ARRAY_BUFFER, (positions.size() + heightmapCoords.size()) * sizeof(float), textureCoords.size() * sizeof(float), &textureCoords[0]);
+	glBufferSubData(GL_ARRAY_BUFFER, positions.size() * sizeof(float), textureCoords.size() * sizeof(float), &textureCoords[0]);
+	//glBufferSubData(GL_ARRAY_BUFFER, (positions.size() + heightmapCoords.size()) * sizeof(float), textureCoords.size() * sizeof(float), &textureCoords[0]);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)(positions.size() * sizeof(float)));
-	glEnableVertexAttribArray(1);
+	//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)(positions.size() * sizeof(float)));
+	//glEnableVertexAttribArray(1);
 
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)((positions.size() + heightmapCoords.size()) * sizeof(float)));
-	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)((positions.size()) * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	glPatchParameteri(GL_PATCH_VERTICES, NUM_PATCH_PTS);
 }
@@ -132,6 +131,14 @@ void Terrain::Draw() const
 	shader.SetInt("u_NormalTexture", 2);
 	shader.SetInt("u_MountainTexture", 3);
 	shader.SetInt("u_MountainNormalTexture", 4);
+
+
+	shader.SetFloat("u_GDispFactor", m_GDispFactor);
+	shader.SetFloat("u_Power", m_Power);
+	shader.SetFloat("u_Freq", m_Freq);
+	shader.SetInt("u_Octaves", m_Octaves);
+	shader.SetFloat("u_FogStart", m_FogStart);
+	shader.SetFloat("u_FogEnd", m_FogEnd);
 
 	int textureMethodType = 0;
 	switch (m_RandomizationMode)
@@ -182,6 +189,15 @@ void Terrain::ImGuiRender()
 		ImGui::SameLine();
 		if (ImGui::RadioButton("Offset", m_RandomizationMode == TerrainRandomizationMode::OFFSET))
 			m_RandomizationMode = TerrainRandomizationMode::OFFSET;
+
+		ImGui::SliderFloat("Displacement Factor", &m_GDispFactor, 0, 30);
+		ImGui::SliderFloat("Power", &m_Power, 0, 10.0);
+		ImGui::SliderFloat("Frequency", &m_Freq, 0, 0.01);
+		int octave = (int)m_Octaves;
+		if (ImGui::SliderInt("Octaves", &octave, 0, 30))
+			m_Octaves = octave;
+
+		ImGui::DragFloatRange2("Fog", &m_FogStart, &m_FogEnd, 1.0f, 0.0f, 5000.0f);
 	}
 }
 

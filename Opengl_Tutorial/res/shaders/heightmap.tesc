@@ -13,23 +13,17 @@ uniform mat4 u_Model = mat4(1.0);
 in VS_OUT
 {
 	vec2 TexCoord;
-	vec2 HCoord;
-    vec3 WorldPos;
 } tc_in[];
 
 out TC_OUT
 {
-	vec2 HeightmapCoord;
-	vec2 TextureCoord;
-    vec3 WorldPos;
+	vec2 TexCoord;
 } tc_out[];
 
 void main()
 {
     gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
-    tc_out[gl_InvocationID].HeightmapCoord = tc_in[gl_InvocationID].HCoord;
-    tc_out[gl_InvocationID].TextureCoord = tc_in[gl_InvocationID].TexCoord;
-    tc_out[gl_InvocationID].WorldPos = tc_in[gl_InvocationID].WorldPos;
+    tc_out[gl_InvocationID].TexCoord = tc_in[gl_InvocationID].TexCoord;
 
     if(gl_InvocationID == 0)
     {
