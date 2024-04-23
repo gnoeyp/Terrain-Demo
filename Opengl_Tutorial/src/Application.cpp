@@ -21,6 +21,8 @@
 #include <random>
 #include <stb_image.h>
 
+const unsigned int DEPTH_MAP_INDEX = 20;
+
 unsigned int windowWidth = 1280;
 unsigned int windowHeight = 720;
 
@@ -40,11 +42,6 @@ unsigned int textureColorbuffers[2];
 unsigned int quadVAO = 0, quadVBO;
 
 void InitFramebuffers();
-
-void ConfigureShaderAndMatrices()
-{
-
-}
 
 void renderQuad(unsigned int& vao, unsigned int& vbo)
 {
@@ -253,7 +250,7 @@ int main()
 
 	//Ground ground;
 	Terrain terrain(
-		"res/textures/iceland_heightmap.png",
+		"res/textures/perlin.png",
 		//"res/textures/mud_cracked_dry/mud_cracked_dry_03_diff_1k.jpg",
 		//"res/textures/mud_cracked_dry/AnyConv.com__mud_cracked_dry_03_nor_gl_1k.png"
 		//"res/textures/sand_muddy/TCom_Sand_Muddy2_2x2_1K_albedo.jpg",
@@ -455,19 +452,18 @@ int main()
 
 			lightSpaceMatrixUbo.SetData(0, &lightSpaceMatrix[0][0]);
 
-			Shader::HOUSE->Bind();
-			glActiveTexture(GL_TEXTURE0 + 3);
+			glActiveTexture(GL_TEXTURE0 + DEPTH_MAP_INDEX);
 			glBindTexture(GL_TEXTURE_2D, depthMap);
-			Shader::HOUSE->SetInt("u_ShadowMap", 3);
+
+			Shader::HOUSE->Bind();
 			Shader::HOUSE->SetInt("u_EnableShadow", 1);
+			Shader::HOUSE->SetInt("u_ShadowMap", DEPTH_MAP_INDEX);
 			house.Draw(*Shader::HOUSE);
 			wood.Draw();
 
 			Shader::HEIGHTMAP->Bind();
-			glActiveTexture(GL_TEXTURE0 + 5);
-			glBindTexture(GL_TEXTURE_2D, depthMap);
-			Shader::HEIGHTMAP->SetInt("u_ShadowMap", 5);
 			Shader::HEIGHTMAP->SetInt("u_EnableShadow", 1);
+			Shader::HEIGHTMAP->SetInt("u_ShadowMap", DEPTH_MAP_INDEX);
 			terrain.Draw();
 			cubeMap.Draw();
 			fire.Draw();

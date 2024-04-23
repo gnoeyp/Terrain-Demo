@@ -132,7 +132,7 @@ void Terrain::Draw() const
 	shader.SetInt("u_NormalTexture", 2);
 	shader.SetInt("u_MountainTexture", 3);
 	shader.SetInt("u_MountainNormalTexture", 4);
-	shader.SetInt("u_ShadowMap", 5);
+
 	int textureMethodType = 0;
 	switch (m_RandomizationMode)
 	{

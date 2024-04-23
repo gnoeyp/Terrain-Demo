@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "House.h"
+#include "Texture.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <imgui.h>
 
@@ -26,6 +27,7 @@ void House::Draw(const Shader& shader) const
 	shader.SetMat4f("u_Model", modelMatrix);
 	shader.SetMat4f("u_NormalModel", glm::transpose(glm::inverse(modelMatrix)));
 	shader.SetVec3f("u_ViewPos", Camera::GetInstance().GetPosition());
+
 	m_Model.Draw(shader);
 }
 
