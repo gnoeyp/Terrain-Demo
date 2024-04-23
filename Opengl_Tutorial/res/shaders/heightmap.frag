@@ -29,7 +29,7 @@ in TE_OUT
 	vec3 FragPos;
 	vec2 TexCoord;
 	vec2 HeightCoord;
-//	vec3 SurfaceNormal;
+	vec3 SurfaceNormal;
 //	vec3 SurfaceTangent;
 	vec4 FragPosLightSpace;
 } fs_in;
@@ -198,7 +198,7 @@ float CalcShadow(vec4 fragPosLightSpace, vec3 surfaceNormal)
 
 void main()
 {
-	float grassCoverage = 0.8;
+	float grassCoverage = 0.65;
 
 	vec4 texColor;
     vec3 normalMap;
@@ -212,40 +212,40 @@ void main()
 
     texColor = mix(lowTexture, highTexture, smoothstep(-3.0, 3.0, height - 15.0));
     normalMap = mix(lowNormal, highNormal, smoothstep(-3.0, 3.0, height - 15.0));
+	normalMap = normalMap * 2.0 - 1.0;
 
 //    mat3 TBN = CalcTBN();
 //    vec3 planeNormal = vec3(TBN[2]);
 
-//    float cosV = abs(dot(planeNormal, vec3(0.0, 1.0, 0.0)));
-//	float tenPercentGrass = grassCoverage - grassCoverage*0.1;
-//	float blendingCoeff = pow((cosV - tenPercentGrass) / (grassCoverage * 0.1), 1.0);
-//
-//    if (cosV > grassCoverage)
-//    {
-//		texColor = lowTexture;
-//    }
-//    else if (cosV > tenPercentGrass)
-//    {
-//		texColor = mix(highTexture, lowTexture, blendingCoeff);
-//    }
-//    else
-//    {
-//		texColor = highTexture;
-//    }
-//
 
-//	normalMap = normalMap * 2.0 - 1.0;
-//    vec3 normal = normalize(TBN * normalMap);
+//    float left  = texture(u_Heightmap, fs_in.HeightCoord + vec2(-u_TexelSizeU, 0.0)).r * 64.0 - 16.0;
+//	float right = texture(u_Heightmap, fs_in.HeightCoord + vec2( u_TexelSizeU, 0.0)).r * 64.0 - 16.0;
+//	float up    = texture(u_Heightmap, fs_in.HeightCoord + vec2(0.0,  u_TexelSizeV)).r * 64.0 - 16.0;
+//	float down  = texture(u_Heightmap, fs_in.HeightCoord + vec2(0.0, -u_TexelSizeV)).r * 64.0 - 16.0;
+//	vec3 surfaceNormal = normalize(vec3(down - up, 2.0, left - right));
 //
-    float left  = texture(u_Heightmap, fs_in.HeightCoord + vec2(-u_TexelSizeU, 0.0)).r * 64.0 - 16.0;
-	float right = texture(u_Heightmap, fs_in.HeightCoord + vec2( u_TexelSizeU, 0.0)).r * 64.0 - 16.0;
-	float up    = texture(u_Heightmap, fs_in.HeightCoord + vec2(0.0,  u_TexelSizeV)).r * 64.0 - 16.0;
-	float down  = texture(u_Heightmap, fs_in.HeightCoord + vec2(0.0, -u_TexelSizeV)).r * 64.0 - 16.0;
-	vec3 surfaceNormal = normalize(vec3(down - up, 2.0, left - right));
+    float cosV = abs(dot(fs_in.SurfaceNormal, vec3(0.0, 1.0, 0.0)));
+	float tenPercentGrass = grassCoverage - grassCoverage*0.1;
+	float blendingCoeff = pow((cosV - tenPercentGrass) / (grassCoverage * 0.1), 1.0);
+
+    if (cosV > grassCoverage)
+    {
+		texColor = lowTexture;
+    }
+    else if (cosV > tenPercentGrass)
+    {
+		texColor = mix(highTexture, lowTexture, blendingCoeff);
+    }
+    else
+    {
+		texColor = highTexture;
+    }
+
+
 
     // diffuse
     vec3 lightDir = normalize(-lightDirection);
-	float diff = max(dot(surfaceNormal, lightDir), 0.0);
+	float diff = max(dot(fs_in.SurfaceNormal, lightDir), 0.0);
 
     // specular
 //	vec3 viewDir = normalize(u_ViewPos - FragPos);
@@ -261,7 +261,7 @@ void main()
 	float visibility = 1.0;
 	visibility = max(min((fogEnd - distance) / (fogEnd - fogStart), 1.0), 0.0);
 
-    float shadow = CalcShadow(fs_in.FragPosLightSpace, surfaceNormal);
+    float shadow = CalcShadow(fs_in.FragPosLightSpace, fs_in.SurfaceNormal);
 
     vec4 color = vec4((ambient + (1.0 - shadow) * diff) * lightColor * vec3(texColor), 1.0);
 	vec4 foggedColor = mix(fogColor, color, visibility);
@@ -269,6 +269,6 @@ void main()
     BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
 
 
-	if (distance > 500.0)
-		discard;
+//	if (distance > 500.0)
+//		discard;
 }

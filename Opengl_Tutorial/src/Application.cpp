@@ -255,10 +255,12 @@ int main()
 		//"res/textures/mud_cracked_dry/AnyConv.com__mud_cracked_dry_03_nor_gl_1k.png"
 		//"res/textures/sand_muddy/TCom_Sand_Muddy2_2x2_1K_albedo.jpg",
 		//"res/textures/sand_muddy/TCom_Sand_Muddy2_2x2_1K_normal.jpg"
-		"res/textures/GroundDirtRocky020/GroundDirtRocky020_COL_2K.jpg",
-		"res/textures/GroundDirtRocky020/GroundDirtRocky020_NRM_2K.jpg",
+		//"res/textures/GroundDirtRocky020/GroundDirtRocky020_COL_2K.jpg",
+		//"res/textures/GroundDirtRocky020/GroundDirtRocky020_NRM_2K.jpg",
 		//"res/textures/gray_rocks/gray_rocks_diff_4k.jpg",
 		//"res/textures/gray_rocks/gray_rocks_nor_gl_4k.jpg",
+		"res/textures/grass/grass01.jpg",
+		"res/textures/GroundDirtRocky020/GroundDirtRocky020_NRM_2K.jpg",
 		"res/textures/rock2.jpg",
 		"res/textures/gray_rocks/gray_rocks_nor_gl_4k.jpg",
 		glm::scale(

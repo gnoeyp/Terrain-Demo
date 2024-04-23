@@ -10,7 +10,7 @@ private:
 	glm::vec3 m_Front;
 	glm::vec3 m_Up;
 	glm::vec3 m_WorldUp;
-	float m_Speed = 5.0f;
+	float m_Speed = 50.0f;
 	float m_Yaw = -90.f;
 	float m_Pitch = 0.0f;
 	float m_Zoom = 45.0f;
