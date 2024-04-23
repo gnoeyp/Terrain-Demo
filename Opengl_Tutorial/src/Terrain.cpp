@@ -22,7 +22,8 @@ Terrain::Terrain(
 	m_Normalmap(normalPath, { GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR }),
 	m_MountainTexture(mountainTexturePath, { GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR }),
 	m_MountainNormalmap(mountainNormalPath, { GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR }),
-	m_ModelMatrix(modelMatrix)
+	m_ModelMatrix(modelMatrix),
+	m_GrassTexture("res/textures/terrainTexture.jpg", { GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR })
 {
 	std::vector<float> positions;
 	std::vector<float> heightmapCoords;
@@ -52,18 +53,6 @@ Terrain::Terrain(
 			positions.push_back(-width / 2.0f + width * (i + 1) / (float)REZ); // v.x
 			positions.push_back(0.0f); // v.y
 			positions.push_back(-height / 2.0f + height * (j + 1) / (float)REZ); // v.z
-
-			//heightmapCoords.push_back(i / (float)REZ); // u
-			//heightmapCoords.push_back(j / (float)REZ); // v
-
-			//heightmapCoords.push_back((i + 1) / (float)REZ); // u
-			//heightmapCoords.push_back(j / (float)REZ); // v
-
-			//heightmapCoords.push_back(i / (float)REZ); // u
-			//heightmapCoords.push_back((j + 1) / (float)REZ); // v
-
-			//heightmapCoords.push_back((i + 1) / (float)REZ); // u
-			//heightmapCoords.push_back((j + 1) / (float)REZ); // v
 
 			textureCoords.push_back(i / (float)REZ);
 			textureCoords.push_back(j / (float)REZ);
@@ -116,6 +105,7 @@ void Terrain::Draw() const
 	m_Normalmap.Bind(2);
 	m_MountainTexture.Bind(3);
 	m_MountainNormalmap.Bind(4);
+	m_GrassTexture.Bind(5);
 
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
@@ -131,6 +121,7 @@ void Terrain::Draw() const
 	shader.SetInt("u_NormalTexture", 2);
 	shader.SetInt("u_MountainTexture", 3);
 	shader.SetInt("u_MountainNormalTexture", 4);
+	shader.SetInt("u_Grass2Texture", 5);
 
 
 	shader.SetFloat("u_GDispFactor", m_GDispFactor);
@@ -192,7 +183,7 @@ void Terrain::ImGuiRender()
 
 		ImGui::SliderFloat("Displacement Factor", &m_GDispFactor, 0, 30);
 		ImGui::SliderFloat("Power", &m_Power, 0, 10.0);
-		ImGui::SliderFloat("Frequency", &m_Freq, 0, 0.01);
+		ImGui::SliderFloat("Frequency", &m_Freq, 0, 1.0);
 		int octave = (int)m_Octaves;
 		if (ImGui::SliderInt("Octaves", &octave, 0, 30))
 			m_Octaves = octave;

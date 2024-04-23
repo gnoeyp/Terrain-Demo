@@ -10,7 +10,7 @@ private:
 	glm::vec3 m_Front;
 	glm::vec3 m_Up;
 	glm::vec3 m_WorldUp;
-	float m_Speed = 200.0f;
+	float m_Speed = 100.0f;
 	float m_Yaw = -90.f;
 	float m_Pitch = 0.0f;
 	float m_Zoom = 45.0f;
@@ -33,5 +33,7 @@ public:
 	inline float GetZoom() const { return m_Zoom; }
 	inline glm::vec3 GetFront() const { return m_Front; }
 	inline glm::vec3 GetUp() const { return m_Up; }
+	inline void SetSpeed(float speed) { m_Speed = speed; }
+	inline float GetSpeed() const { return m_Speed; }
 };
 

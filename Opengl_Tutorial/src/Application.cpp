@@ -314,7 +314,7 @@ int main()
 	// Instancing
 	Shader::FIRE->SetVec3f("u_CameraUp", camera.GetUp());
 	Shader::FIRE->SetVec3f("u_CameraFront", camera.GetFront());
-	Fire fire(3.0f, 9.75f, 5.2f);
+	Fire fire(3.0f, 0.55f, 5.2f);
 
 
 	// Framebuffer
@@ -360,6 +360,8 @@ int main()
 	float previousTime = 0.0f;
 	unsigned int fps = 0;
 
+	float cameraSpeed = camera.GetSpeed();
+
 	while (!glfwWindowShouldClose(window))
 	{
 		frameCount++;
@@ -382,6 +384,8 @@ int main()
 		if (ImGui::gizmo3D("", dir))
 			lightDirection = glm::normalize(glm::vec3(dir.x, dir.y, dir.z));
 		ImGui::Checkbox("Depth buffer", &showDepthBuffer);
+		if (ImGui::SliderFloat("Camera Speed", &cameraSpeed, 0.0f, 200.0f))
+			camera.SetSpeed(cameraSpeed);
 
 		if (currentFrame - previousTime > 1.0)
 		{

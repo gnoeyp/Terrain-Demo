@@ -6,6 +6,7 @@ layout(location = 1) out vec4 BrightColor;
 uniform sampler2D u_Heightmap;
 uniform sampler2D u_Texture;
 uniform sampler2D u_NormalTexture;
+uniform sampler2D u_Grass2Texture;
 uniform sampler2D u_MountainTexture;
 uniform sampler2D u_MountainNormalTexture;
 uniform sampler2D u_ShadowMap;
@@ -40,7 +41,7 @@ in TE_OUT
 } fs_in;
 
 
-vec3 seed = vec3(0.0, 0.1, 0.3);
+vec2 seed = vec2(0.0, 0.1);
 
 float Random2D(in vec2 st)
 {
@@ -70,14 +71,14 @@ float InterpolatedNoise(int ind, float x, float y) {
 	return k0 + k1*w.x + k2*w.y + k3*w.x*w.y;
 }
 
-float perlin(vec2 st){
+float perlin(vec2 st, int octave, float freq, float gDispFactor, float power){
     const mat2 m = mat2(0.8,-0.6,0.6,0.8);
     
 	float persistence = 0.5;
 	float total = 0.0,
-		frequency = 0.05*u_Freq,
-		amplitude = u_GDispFactor;
-	for (int i = 0; i < u_Octaves; ++i) {
+		frequency = 0.05*freq,
+		amplitude = gDispFactor;
+	for (int i = 0; i < octave; ++i) {
 		frequency *= 2.0;
 		amplitude *= persistence;
 
@@ -86,7 +87,7 @@ float perlin(vec2 st){
 		total += InterpolatedNoise(0, v.x, v.y) * amplitude;
 	}
 
-	return pow(total, u_Power);
+	return pow(total, power);
 }
 
 float sum( vec3 v ) { return v.x+v.y+v.z; }
@@ -260,12 +261,16 @@ void main()
 
     float height = texture(u_Heightmap, fs_in.HeightCoord).y * 64.0 - 16.0;
 
-    vec4 lowTexture = GetTexture(u_Texture, fs_in.TexCoord * 100.0);
-    vec4 highTexture = GetTexture(u_MountainTexture, fs_in.TexCoord * 8.0);
-    vec3 lowNormal = vec3(GetTexture(u_NormalTexture, fs_in.TexCoord * 100.0));
-    vec3 highNormal = vec3(GetTexture(u_MountainNormalTexture, fs_in.TexCoord * 8.0));
+    float perlinBlendingCoeff = clamp(perlin(fs_in.HeightCoord, 5, 0.5, 12.0, 1.15) / 10.0, 0.0, 1.0);
+    float grassTextureDivision = 500.0;
+    float rockTextureDivision = 20.0;
 
-    texColor = mix(lowTexture, highTexture, smoothstep(-3.0, 3.0, height - 15.0));
+    vec4 grassTexture = mix(GetTexture(u_Texture, fs_in.TexCoord * grassTextureDivision), GetTexture(u_Grass2Texture, fs_in.TexCoord * grassTextureDivision), perlinBlendingCoeff);
+    vec4 highTexture = GetTexture(u_MountainTexture, fs_in.TexCoord * rockTextureDivision);
+    vec3 lowNormal = vec3(GetTexture(u_NormalTexture, fs_in.TexCoord * grassTextureDivision));
+    vec3 highNormal = vec3(GetTexture(u_MountainNormalTexture, fs_in.TexCoord * rockTextureDivision));
+
+    texColor = mix(grassTexture, highTexture, smoothstep(-3.0, 3.0, height - 15.0));
     normalMap = mix(lowNormal, highNormal, smoothstep(-3.0, 3.0, height - 15.0));
 	normalMap = normalMap * 2.0 - 1.0;
 
@@ -273,10 +278,10 @@ void main()
 //    vec3 planeNormal = vec3(TBN[2]);
 
 
-    float left  = perlin(fs_in.HeightCoord + vec2(-1.0, 0.0));
-    float right  = perlin(fs_in.HeightCoord + vec2(1.0, 0.0));
-    float up  = perlin(fs_in.HeightCoord + vec2(0.0, -1.0));
-    float down  = perlin(fs_in.HeightCoord + vec2(0.0, 1.0));
+    float left  = perlin(fs_in.HeightCoord + vec2(-1.0, 0.0), u_Octaves, u_Freq, u_GDispFactor, u_Power);
+    float right  = perlin(fs_in.HeightCoord + vec2(1.0, 0.0), u_Octaves, u_Freq, u_GDispFactor, u_Power);
+    float up  = perlin(fs_in.HeightCoord + vec2(0.0, -1.0), u_Octaves, u_Freq, u_GDispFactor, u_Power);
+    float down  = perlin(fs_in.HeightCoord + vec2(0.0, 1.0), u_Octaves, u_Freq, u_GDispFactor, u_Power);
 	vec3 surfaceNormal = normalize(vec3(down - up, 2.0, left - right));
 
     float cosV = abs(dot(surfaceNormal, vec3(0.0, 1.0, 0.0)));
@@ -285,11 +290,11 @@ void main()
 
     if (cosV > grassCoverage)
     {
-		texColor = lowTexture;
+		texColor = grassTexture;
     }
     else if (cosV > tenPercentGrass)
     {
-		texColor = mix(highTexture, lowTexture, blendingCoeff);
+		texColor = mix(highTexture, grassTexture, blendingCoeff);
     }
     else
     {

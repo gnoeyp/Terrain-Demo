@@ -23,7 +23,7 @@ private:
 	float m_FogEnd = 2000.0f;
 	TerrainRenderMode m_RenderMode = TerrainRenderMode::DEFAULT;
 	TerrainRandomizationMode m_RandomizationMode = TerrainRandomizationMode::ROTATE;
-	Texture m_Heightmap, m_Texture, m_Normalmap, m_MountainTexture, m_MountainNormalmap;
+	Texture m_Heightmap, m_Texture, m_Normalmap, m_MountainTexture, m_MountainNormalmap, m_GrassTexture;
 	glm::mat4 m_ModelMatrix;
 public:
 	Terrain(

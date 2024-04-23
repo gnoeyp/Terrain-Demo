@@ -5,14 +5,14 @@
 Wood::Wood()
 {
 	m_ModelMatrices[0] = glm::scale(
-		glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 9.7f, 5.0f)),
+		glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 0.46f, 5.0f)),
 		glm::vec3(0.02f, 0.02f, 0.02f)
 	);
 
 	m_ModelMatrices[1] = glm::rotate(
 		glm::rotate(
 			glm::scale(
-				glm::translate(glm::mat4(1.0f), glm::vec3(2.7f, 9.7f, 5.3f)),
+				glm::translate(glm::mat4(1.0f), glm::vec3(2.7f, 0.46f, 5.3f)),
 				glm::vec3(0.02f, 0.02f, 0.02f)
 			),
 			glm::radians(90.f), glm::vec3(0.0f, 1.0f, 0.0f)
