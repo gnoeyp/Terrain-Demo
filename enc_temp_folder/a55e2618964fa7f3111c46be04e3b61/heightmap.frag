@@ -29,6 +29,8 @@ in TE_OUT
 	vec3 FragPos;
 	vec2 TexCoord;
 	vec2 HeightCoord;
+//	vec3 SurfaceNormal;
+//	vec3 SurfaceTangent;
 	vec4 FragPosLightSpace;
 } fs_in;
 

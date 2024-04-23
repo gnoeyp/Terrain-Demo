@@ -30,6 +30,8 @@ out TE_OUT
 	vec3 FragPos;
     vec2 TexCoord;
 	vec2 HeightCoord;
+//	vec3 SurfaceNormal;
+//	vec3 SurfaceTangent;
 	vec4 FragPosLightSpace;
 } te_out;
 
@@ -167,7 +169,21 @@ void main()
     te_out.HeightCoord = ((p1-p0)*v + p0).xz;
 
     vec4 pCenter = CalcPosition(u, v);
-
+//    vec4 p0 = CalcPosition(u - u_TexelSizeU, v);
+//    vec4 p1 = CalcPosition(u + u_TexelSizeU, v);
+//    vec4 p2 = CalcPosition(u, v - u_TexelSizeV);
+//    vec4 p3 = CalcPosition(u, v + u_TexelSizeV);
+//
+//    vec3 n0 = normalize(-cross(vec3(pCenter - p0), vec3(p3 - pCenter)));
+//    vec3 n1 = normalize(-cross(vec3(p1 - pCenter), vec3(p3 - pCenter)));
+//    vec3 n2 = normalize(-cross(vec3(pCenter - p2), vec3(p0 - pCenter)));
+//    vec3 n3 = normalize(-cross(vec3(p2 - pCenter), vec3(p1 - pCenter)));
+//
+//    te_out.SurfaceNormal = normalize(transpose(inverse(mat3(u_Model))) * (n0 + n1 + n2 + n3));
+//    vec3 tangent = normalize(mat3(u_Model) * vec3(p1 - p0));
+//    vec3 bitangent = normalize(cross(te_out.SurfaceNormal, tangent));
+//    te_out.SurfaceTangent = normalize(cross(bitangent, te_out.SurfaceNormal));
+//
     gl_Position = projection * view * u_Model * pCenter;
     te_out.FragPos = vec3(u_Model * pCenter);
     te_out.FragPosLightSpace = lightSpaceMatrix * vec4(te_out.FragPos, 1.0);
