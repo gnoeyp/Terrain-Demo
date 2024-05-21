@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor">
+      <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\glm">
+      <UniqueIdentifier>{829FC5A8-6E57-07F6-D75E-E051C335A2E6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\glm\glm">
+      <UniqueIdentifier>{D11AC9C9-BDE8-BCCF-A67C-2DF692E99834}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\glm\glm\detail">
+      <UniqueIdentifier>{739DA071-DF09-5C6C-A8FD-F3C914297ED4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\glm\glm\simd">
+      <UniqueIdentifier>{CDE1A2E0-3943-80EE-C2B0-C6A02E11B7AD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\imGuIZMO.quat">
+      <UniqueIdentifier>{9C831C77-8812-A640-3131-BA3B1D9FB6E6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\imGuIZMO.quat\imGuIZMO.quat">
+      <UniqueIdentifier>{45B7680A-31F3-6B74-9A05-846B8660148F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\imgui">
+      <UniqueIdentifier>{5D3BD0F0-499E-5F95-F223-984BDE652B18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\imgui\backends">
+      <UniqueIdentifier>{27CEAEAF-933A-6AAA-5C2E-0208C8598C12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\stb_image">
+      <UniqueIdentifier>{0DA0BA59-F998-D9AB-22CB-BE300E23B9B7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Camera.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CubeMap.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Fire.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GLUtils.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\House.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Mesh.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Particle.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Shader.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Terrain.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Texture.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UniformBlock.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Wood.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\glm\glm\simd\common.h">
+      <Filter>vendor\glm\glm\simd</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\glm\glm\simd\exponential.h">
+      <Filter>vendor\glm\glm\simd</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\glm\glm\simd\geometric.h">
+      <Filter>vendor\glm\glm\simd</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\glm\glm\simd\integer.h">
+      <Filter>vendor\glm\glm\simd</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\glm\glm\simd\matrix.h">
+      <Filter>vendor\glm\glm\simd</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\glm\glm\simd\neon.h">
+      <Filter>vendor\glm\glm\simd</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\glm\glm\simd\packing.h">
+      <Filter>vendor\glm\glm\simd</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\glm\glm\simd\platform.h">
+      <Filter>vendor\glm\glm\simd</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\glm\glm\simd\trigonometric.h">
+      <Filter>vendor\glm\glm\simd</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\glm\glm\simd\vector_relational.h">
+      <Filter>vendor\glm\glm\simd</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imGuIZMO.quat\imGuIZMO.quat\imGuIZMOquat.h">
+      <Filter>vendor\imGuIZMO.quat\imGuIZMO.quat</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imGuIZMO.quat\imGuIZMO.quat\vGizmo.h">
+      <Filter>vendor\imGuIZMO.quat\imGuIZMO.quat</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imGuIZMO.quat\imGuIZMO.quat\vGizmoMath.h">
+      <Filter>vendor\imGuIZMO.quat\imGuIZMO.quat</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imGuIZMO.quat\imGuIZMO.quat\vgConfig.h">
+      <Filter>vendor\imGuIZMO.quat\imGuIZMO.quat</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imGuIZMO.quat\imGuIZMO.quat\vgMath.h">
+      <Filter>vendor\imGuIZMO.quat\imGuIZMO.quat</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui\backends\imgui_impl_glfw.h">
+      <Filter>vendor\imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui\backends\imgui_impl_opengl3.h">
+      <Filter>vendor\imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui\imconfig.h">
+      <Filter>vendor\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui\imgui.h">
+      <Filter>vendor\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui\imgui_internal.h">
+      <Filter>vendor\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui\imstb_rectpack.h">
+      <Filter>vendor\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui\imstb_textedit.h">
+      <Filter>vendor\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui\imstb_truetype.h">
+      <Filter>vendor\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\stb_image\stb_image.h">
+      <Filter>vendor\stb_image</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Application.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Camera.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CubeMap.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Fire.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GLUtils.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\House.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Mesh.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Particle.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Shader.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Terrain.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Texture.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UniformBlock.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Wood.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\glm\glm\detail\glm.cpp">
+      <Filter>vendor\glm\glm\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imGuIZMO.quat\imGuIZMO.quat\imGuIZMOquat.cpp">
+      <Filter>vendor\imGuIZMO.quat\imGuIZMO.quat</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui\backends\imgui_impl_glfw.cpp">
+      <Filter>vendor\imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui\backends\imgui_impl_opengl3.cpp">
+      <Filter>vendor\imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui\imgui.cpp">
+      <Filter>vendor\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui\imgui_demo.cpp">
+      <Filter>vendor\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui\imgui_draw.cpp">
+      <Filter>vendor\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui\imgui_tables.cpp">
+      <Filter>vendor\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui\imgui_widgets.cpp">
+      <Filter>vendor\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\stb_image\stb_image.cpp">
+      <Filter>vendor\stb_image</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

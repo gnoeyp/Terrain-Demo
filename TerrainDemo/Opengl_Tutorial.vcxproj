@@ -514,6 +514,7 @@
     <None Include="res\shaders\heightmap_norm.geom" />
     <None Include="res\shaders\skybox.frag" />
     <None Include="res\shaders\skybox.vert" />
+    <None Include="premake.lua" />
     <None Include="vendor\glm\doc\api\a00002.html" />
     <None Include="vendor\glm\doc\api\a00002_source.html" />
     <None Include="vendor\glm\doc\api\a00005_source.html" />

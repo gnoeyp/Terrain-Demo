@@ -2329,6 +2329,7 @@
     <None Include="res\shaders\heightmap_norm.frag" />
     <None Include="res\shaders\debugDepth.vert" />
     <None Include="res\shaders\debugDepth.frag" />
+    <None Include="premake.lua" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="vendor\imgui\misc\debuggers\imgui.natvis" />

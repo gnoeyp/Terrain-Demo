@@ -361,5 +361,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/Opengl_Tutorial/res/textures
-/Opengl_Tutorial/dependencies
+/TerrainDemo/res/textures
+/TerrainDemo/dependencies
+
+bin/
+bin-int/

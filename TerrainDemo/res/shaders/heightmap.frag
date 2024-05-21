@@ -3,7 +3,6 @@
 layout(location = 0) out vec4 FragColor;
 layout(location = 1) out vec4 BrightColor;
 
-uniform sampler2D u_Heightmap;
 uniform sampler2D u_Texture;
 uniform sampler2D u_NormalTexture;
 uniform sampler2D u_Grass2Texture;
@@ -259,8 +258,6 @@ void main()
 	vec4 texColor;
     vec3 normalMap;
 
-    float height = texture(u_Heightmap, fs_in.HeightCoord).y * 64.0 - 16.0;
-
     float perlinBlendingCoeff = clamp(perlin(fs_in.HeightCoord, 5, 0.5, 12.0, 1.15) / 10.0, 0.0, 1.0);
     float grassTextureDivision = 500.0;
     float rockTextureDivision = 20.0;
@@ -269,14 +266,6 @@ void main()
     vec4 highTexture = GetTexture(u_MountainTexture, fs_in.TexCoord * rockTextureDivision);
     vec3 lowNormal = vec3(GetTexture(u_NormalTexture, fs_in.TexCoord * grassTextureDivision));
     vec3 highNormal = vec3(GetTexture(u_MountainNormalTexture, fs_in.TexCoord * rockTextureDivision));
-
-    texColor = mix(grassTexture, highTexture, smoothstep(-3.0, 3.0, height - 15.0));
-    normalMap = mix(lowNormal, highNormal, smoothstep(-3.0, 3.0, height - 15.0));
-	normalMap = normalMap * 2.0 - 1.0;
-
-//    mat3 TBN = CalcTBN();
-//    vec3 planeNormal = vec3(TBN[2]);
-
 
     float left  = perlin(fs_in.HeightCoord + vec2(-1.0, 0.0), u_Octaves, u_Freq, u_GDispFactor, u_Power);
     float right  = perlin(fs_in.HeightCoord + vec2(1.0, 0.0), u_Octaves, u_Freq, u_GDispFactor, u_Power);
@@ -300,8 +289,6 @@ void main()
     {
 		texColor = highTexture;
     }
-
-
 
     // diffuse
     vec3 lightDir = normalize(-lightDirection);
